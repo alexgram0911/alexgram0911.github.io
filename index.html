@@ -151,6 +151,42 @@
     }
     .pill strong{ color: var(--ink); font-weight: 700; }
 
+    /* Character Sheet Link (Lanternlight style) */
+    .lantern-link{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,215,122,.35);
+      background:
+        radial-gradient(600px 120px at 20% 0%, rgba(255,215,122,.14), transparent 60%),
+        rgba(15,43,29,.55);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 13px;
+      letter-spacing:.04em;
+      text-decoration:none;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.12),
+        0 10px 28px var(--shadow);
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+      white-space:nowrap;
+    }
+    .lantern-link:hover{
+      transform: translateY(-1px);
+      background:
+        radial-gradient(600px 120px at 20% 0%, rgba(255,215,122,.22), transparent 60%),
+        rgba(15,43,29,.65);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.18),
+        0 14px 36px rgba(0,0,0,.45);
+    }
+    .lantern-link:active{
+      transform: translateY(0);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,.4);
+    }
+
     .card-body{
       padding: 22px 20px 26px;
     }
@@ -263,46 +299,10 @@
     }
     .sig small{ opacity:.85; }
 
-    /* Tiny “trail” divider */
     .trail{
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(255,215,122,.35), rgba(127,214,159,.25), transparent);
       margin: 18px 0;
-    }
-   /* Lanternlight Character Sheet Link */
-    .lantern-link{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid rgba(255,215,122,.35);
-      background:
-        radial-gradient(600px 120px at 20% 0%, rgba(255,215,122,.14), transparent 60%),
-        rgba(15,43,29,.55);
-      color: var(--ink);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-size: 13px;
-      letter-spacing:.04em;
-      text-decoration:none;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.12),
-        0 10px 28px var(--shadow);
-      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
-      white-space: nowrap;
-    }
-    .lantern-link:hover{
-      transform: translateY(-1px);
-      background:
-        radial-gradient(600px 120px at 20% 0%, rgba(255,215,122,.22), transparent 60%),
-        rgba(15,43,29,.65);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.18),
-        0 14px 36px rgba(0,0,0,.45);
-    }
-    .lantern-link:active{
-      transform: translateY(0);
-      box-shadow: inset 0 2px 6px rgba(0,0,0,.4);
     }
   </style>
 </head>
@@ -346,8 +346,7 @@
           <span class="pill">Help is always a choice.</span>
         </div>
 
-                <a href="./character-sheet/" class="lantern-link">📄 Character Sheet</a>
-
+        <a href="./character-sheet/" class="lantern-link">📄 Character Sheet</a>
       </div>
 
       <div class="card-body">
