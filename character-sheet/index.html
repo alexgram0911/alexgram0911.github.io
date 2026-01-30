@@ -316,22 +316,32 @@
   white-space: nowrap;
 }
 
-    /* Print settings */
-    @page { size: Letter; margin: 0.35in; }
-    @media print{
-      body{ background:#fff; }
-      .page{ padding:0; }
-      .sheet{
-        box-shadow:none;
-        border:none;
-        margin:0;
+   /* Mobile fit: keep the exact look, just scale the whole sheet so it never crops */
+    .sheet-wrap{
+      transform-origin: top center;
+    }
+
+    @media (max-width: 900px){
+      .page{
+        justify-content: center;
+        padding: 12px;
       }
+
+      /* 8.5in = 816px in CSS (1in = 96px). Scale to fit viewport width. */
+      .sheet-wrap{
+        transform: scale(clamp(0.35, calc((100vw - 24px) / 816), 1));
+      }
+
+      /* Keep the layout from forcing horizontal scroll */
+      body{ overflow-x: hidden; }
+    }
     }
   </style>
 </head>
 <body>
   <div class="page">
-    <div class="sheet">
+    <div class="sheet-wrap">
+      <div class="sheet">
 
       <!-- HEADER -->
       <div class="header">
@@ -429,7 +439,9 @@
 </div>
 
       </div>
+      </div>
     </div>
   </div>
+</body>
 </body>
 </html>
