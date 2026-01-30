@@ -316,32 +316,6 @@
   white-space: nowrap;
 }
 
-    /* Mobile + narrow window fit: keep the exact look, just scale the whole sheet so it never crops */
-    .sheet-wrap{
-      transform-origin: top center;
-    }
-
-    @media (max-width: 900px){
-      .page{
-        justify-content:center;
-        padding: 12px;
-      }
-
-      /* 8.5in = 816px in CSS (1in = 96px). Scale to fit viewport width. */
-      .sheet-wrap{
-        transform: scale(clamp(0.35, calc((100vw - 24px) / 816), 1));
-      }
-
-      body{ overflow-x:hidden; }
-    }
-
-    /* ALSO scale on desktop if you manually shrink the browser window */
-    @media (max-width: 860px){
-      .sheet-wrap{
-        transform: scale(clamp(0.35, calc((100vw - 24px) / 816), 1));
-      }
-    }
-
     /* Print settings */
     @page { size: Letter; margin: 0.35in; }
     @media print{
@@ -352,14 +326,12 @@
         border:none;
         margin:0;
       }
-      .sheet-wrap{ transform:none !important; }
     }
   </style>
 </head>
 <body>
   <div class="page">
-    <div class="sheet-wrap">
-      <div class="sheet">
+    <div class="sheet">
 
       <!-- HEADER -->
       <div class="header">
@@ -456,7 +428,6 @@
   <div class="motto">THE LANTERNS REMAIN LIT.</div>
 </div>
 
-      </div>
       </div>
     </div>
   </div>
