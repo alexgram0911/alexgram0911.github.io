@@ -316,14 +316,14 @@
   white-space: nowrap;
 }
 
-   /* Mobile fit: keep the exact look, just scale the whole sheet so it never crops */
+    /* Mobile + narrow window fit: keep the exact look, just scale the whole sheet so it never crops */
     .sheet-wrap{
       transform-origin: top center;
     }
 
     @media (max-width: 900px){
       .page{
-        justify-content: center;
+        justify-content:center;
         padding: 12px;
       }
 
@@ -332,9 +332,27 @@
         transform: scale(clamp(0.35, calc((100vw - 24px) / 816), 1));
       }
 
-      /* Keep the layout from forcing horizontal scroll */
-      body{ overflow-x: hidden; }
+      body{ overflow-x:hidden; }
     }
+
+    /* ALSO scale on desktop if you manually shrink the browser window */
+    @media (max-width: 860px){
+      .sheet-wrap{
+        transform: scale(clamp(0.35, calc((100vw - 24px) / 816), 1));
+      }
+    }
+
+    /* Print settings */
+    @page { size: Letter; margin: 0.35in; }
+    @media print{
+      body{ background:#fff; }
+      .page{ padding:0; }
+      .sheet{
+        box-shadow:none;
+        border:none;
+        margin:0;
+      }
+      .sheet-wrap{ transform:none !important; }
     }
   </style>
 </head>
@@ -442,6 +460,5 @@
       </div>
     </div>
   </div>
-</body>
 </body>
 </html>
