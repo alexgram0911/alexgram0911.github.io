@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lanternlight Trail – Character Sheet</title>
+  <style>
+    :root{
+      --ink:#111;
+      --muted:#333;
+      --thin:#b9b9b9;
+      --thin2:#d6d6d6;
+      --bg:#fff;
+      --panel:#fafafa;
+      --accent:#2a2a2a;
+      --soft:#f2f2f2;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background:#e9e9e9;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--ink);
+    }
+
+    /* Page wrapper for on-screen preview */
+    .page{
+      display:flex;
+      justify-content:center;
+      padding: 18px;
+    }
+
+    /* The printable sheet */
+    .sheet{
+      width: 8.5in;
+      min-height: 11in;
+      background: var(--bg);
+      border: 1px solid var(--thin);
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
+      padding: 0.35in;
+      position: relative;
+      overflow:hidden;
+    }
+
+    /* Subtle “tech paper” texture */
+    .sheet:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      opacity:.28;
+      background:
+        linear-gradient(0deg, rgba(0,0,0,.03), rgba(0,0,0,0) 40%),
+        repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0px, rgba(0,0,0,.035) 1px, transparent 1px, transparent 18px);
+      mix-blend-mode:multiply;
+    }
+
+    /* Tiny hex hint, extremely subtle (prints as faint texture) */
+    .sheet:after{
+      content:"";
+      position:absolute;
+      inset:-40px;
+      pointer-events:none;
+      opacity:.06; /* keep tiny */
+      background:
+        radial-gradient(circle at 10px 10px, rgba(0,0,0,.8) 1px, transparent 1px),
+        radial-gradient(circle at 30px 30px, rgba(0,0,0,.8) 1px, transparent 1px);
+      background-size: 36px 36px;
+      transform: rotate(7deg);
+    }
+
+    /* Header bar */
+    .header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      border: 2px solid var(--accent);
+      padding: 10px 12px;
+      position: relative;
+      background: #fff;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+      line-height:1.1;
+    }
+    .brand .title{
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+    .brand .subtitle{
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing:.02em;
+    }
+
+    /* Lantern icon (simple) */
+    .lantern{
+      width: 44px;
+      height: 44px;
+      border: 2px solid var(--accent);
+      border-radius: 10px;
+      position: relative;
+      flex: 0 0 auto;
+      background: linear-gradient(180deg, #fff, var(--panel));
+    }
+    .lantern:before{
+      content:"";
+      position:absolute;
+      left: 50%;
+      top: 8px;
+      width: 18px;
+      height: 22px;
+      transform: translateX(-50%);
+      border: 2px solid var(--accent);
+      border-radius: 6px;
+      background: linear-gradient(180deg, #fff, #f7f7f7);
+    }
+    .lantern:after{
+      content:"";
+      position:absolute;
+      left: 50%;
+      top: 3px;
+      width: 22px;
+      height: 10px;
+      transform: translateX(-50%);
+      border: 2px solid var(--accent);
+      border-bottom: none;
+      border-radius: 12px 12px 0 0;
+      background: transparent;
+    }
+
+    /* Small “file tag” */
+    .tag{
+      position:absolute;
+      right: 10px;
+      bottom: -10px;
+      background: #fff;
+      border: 2px solid var(--accent);
+      padding: 4px 8px;
+      font-size: 10px;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+    }
+
+    /* Grid sections */
+    .grid{
+      margin-top: 10px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .row3{
+      display:grid;
+      grid-template-columns: 2.1fr 1.2fr 1.3fr;
+      gap: 10px;
+    }
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .box{
+      border: 2px solid var(--accent);
+      background: #fff;
+      padding: 10px 12px 12px;
+      position: relative;
+    }
+
+    .label{
+      position:absolute;
+      top: -10px;
+      left: 10px;
+      background:#fff;
+      padding: 0 6px;
+      font-size: 10px;
+      letter-spacing:.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .line{
+      height: 22px;
+      border-bottom: 1px solid var(--thin);
+      margin-top: 10px;
+    }
+
+    /* Stat strip */
+    .stats{
+      border: 2px solid var(--accent);
+      background: #fff;
+      padding: 10px 12px 12px;
+      position: relative;
+    }
+
+    .stats .label{ left: 10px; }
+
+    .statbar{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .stat{
+      border: 1px solid var(--thin);
+      padding: 10px 10px 12px;
+      background: var(--panel);
+      position: relative;
+      min-height: 64px;
+    }
+
+    .statname{
+      font-weight: 800;
+      letter-spacing:.08em;
+      text-transform: uppercase;
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+
+    /* “Dial” area like a tech slot */
+    .dial{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+    }
+
+    .circle{
+      width: 30px;
+      height: 30px;
+      border: 2px solid var(--accent);
+      border-radius: 999px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 800;
+      font-size: 12px;
+      color: var(--ink);
+    }
+
+    .hint{
+      font-size: 10px;
+      color: var(--muted);
+      line-height:1.3;
+    }
+
+    /* Big notes */
+    .notes{
+      min-height: 4.1in;
+    }
+
+    .notes .ruled{
+      margin-top: 10px;
+      border: 1px solid var(--thin2);
+      background:
+        repeating-linear-gradient(
+          180deg,
+          #fff 0px,
+          #fff 22px,
+          rgba(0,0,0,.06) 23px
+        );
+      height: 3.55in;
+    }
+
+    /* Small footer box */
+  .footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 14px;
+  border: 2px solid var(--accent);
+  padding: 10px 14px;
+  background:#fff;
+  font-size: 11px;
+  letter-spacing:.02em;
+}
+
+.lantern-track{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.lantern-label{
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing:.04em;
+}
+
+.boxes{
+  display:flex;
+  gap:5px;
+}
+
+.boxes span{
+  width: 14px;
+  height: 14px;
+  border: 1.8px solid var(--accent);
+  background:#fafafa;
+}
+
+.motto{
+  font-size: 10px;
+  letter-spacing:.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+    /* Print settings */
+    @page { size: Letter; margin: 0.35in; }
+    @media print{
+      body{ background:#fff; }
+      .page{ padding:0; }
+      .sheet{
+        box-shadow:none;
+        border:none;
+        margin:0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="sheet">
+
+      <!-- HEADER -->
+      <div class="header">
+        <div class="brand">
+          <div class="title">Lanternlight Trail</div>
+          <div class="subtitle">Character Sheet • travel, care, and return</div>
+        </div>
+        <div class="lantern" aria-hidden="true"></div>
+        <div class="tag">LL-01</div>
+      </div>
+
+      <div class="grid">
+
+        <!-- IDENTITY -->
+        <div class="row3">
+          <div class="box">
+            <div class="label">Name</div>
+            <div class="line"></div>
+          </div>
+          <div class="box">
+            <div class="label">Creature</div>
+            <div class="line"></div>
+          </div>
+          <div class="box">
+            <div class="label">Role</div>
+            <div class="line"></div>
+          </div>
+        </div>
+
+        <!-- TRAITS -->
+        <div class="row2">
+          <div class="box">
+            <div class="label">Good At</div>
+            <div class="line"></div>
+          </div>
+          <div class="box">
+            <div class="label">Afraid Of</div>
+            <div class="line"></div>
+          </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats">
+          <div class="label">Stats (assign +2, +1, 0, −1)</div>
+          <div class="statbar">
+            <div class="stat">
+              <div class="statname">Trail</div>
+              <div class="dial">
+                <div class="circle"></div>
+                <div class="hint">Paths, navigation, safe travel.</div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="statname">Care</div>
+              <div class="dial">
+                <div class="circle"></div>
+                <div class="hint">Cooking, tending, comfort.</div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="statname">Clever</div>
+              <div class="dial">
+                <div class="circle"></div>
+                <div class="hint">Noticing, puzzles, talking.</div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="statname">Endure</div>
+              <div class="dial">
+                <div class="circle"></div>
+                <div class="hint">Cold, fear, fatigue, grit.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTES -->
+        <div class="box notes">
+          <div class="label">Notes & Journey Details</div>
+          <div class="ruled" aria-hidden="true"></div>
+        </div>
+
+        <!-- FOOTER -->
+       <div class="footer">
+  <div class="lantern-track">
+    <div class="lantern-label">
+      <strong>Lanternlight</strong> is shared · start at <strong>6</strong>
+    </div>
+    <div class="boxes">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span>
+    </div>
+  </div>
+  <div class="motto">THE LANTERNS REMAIN LIT.</div>
+</div>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
