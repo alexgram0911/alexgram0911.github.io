@@ -100,41 +100,51 @@
       letter-spacing:.02em;
     }
 
-    /* Lantern icon (simple) */
-    .lantern{
-      width: 44px;
-      height: 44px;
-      border: 2px solid var(--accent);
-      border-radius: 10px;
-      position: relative;
-      flex: 0 0 auto;
-      background: linear-gradient(180deg, #fff, var(--panel));
-    }
-    .lantern:before{
-      content:"";
-      position:absolute;
-      left: 50%;
-      top: 8px;
-      width: 18px;
-      height: 22px;
-      transform: translateX(-50%);
-      border: 2px solid var(--accent);
-      border-radius: 6px;
-      background: linear-gradient(180deg, #fff, #f7f7f7);
-    }
-    .lantern:after{
-      content:"";
-      position:absolute;
-      left: 50%;
-      top: 3px;
-      width: 22px;
-      height: 10px;
-      transform: translateX(-50%);
-      border: 2px solid var(--accent);
-      border-bottom: none;
-      border-radius: 12px 12px 0 0;
-      background: transparent;
-    }
+   /* Bomb / Beacon icon */
+.lantern{
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  position: relative;
+  flex: 0 0 auto;
+  background: linear-gradient(180deg, #fff, var(--panel));
+}
+/* Main bomb body */
+.lantern:before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width: 20px;
+  height: 20px;
+  transform: translate(-50%, -40%);
+  border: 2px solid var(--accent);
+  border-radius: 999px;
+  background:#fff;
+}
+/* Fuse */
+.lantern:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:6px;
+  width: 16px;
+  height: 16px;
+  transform: translateX(-50%);
+  border-top: 2px solid var(--accent);
+  border-right: 2px solid var(--accent);
+  border-radius: 50%;
+}
+    .lantern span{
+  position:absolute;
+  top:2px;
+  right:6px;
+  width:4px;
+  height:4px;
+  background: var(--accent);
+  border-radius:999px;
+}
 
     /* Small “file tag” */
     .tag{
