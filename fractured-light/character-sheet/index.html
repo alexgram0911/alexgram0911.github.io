@@ -3,413 +3,480 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Fractured Light • Printable Character Sheet</title>
+  <title>Fractured Light – Character Sheet</title>
   <style>
     :root{
       --ink:#111;
       --muted:#333;
-      --line:#222;
-      --thin:#555;
-      --paper:#fff;
-
-      --w: 8.5in;   /* US Letter */
-      --h: 11in;
-      --pad: 0.45in;
-      --radius: 10px;
+      --thin:#b9b9b9;
+      --thin2:#d6d6d6;
+      --bg:#fff;
+      --panel:#fafafa;
+      --accent:#2a2a2a;
+      --soft:#f2f2f2;
     }
 
-    html, body{
+    *{ box-sizing:border-box; }
+    body{
       margin:0;
-      padding:0;
-      background:#f3f3f3;
+      background:#e9e9e9;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color: var(--ink);
-      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
-      line-height:1.25;
     }
 
-    /* PAGE */
+    /* Page wrapper for on-screen preview */
     .page{
-      width: min(var(--w), 100%);
-      background: var(--paper);
-      margin: 24px auto;
-      padding: var(--pad);
-      box-shadow: 0 10px 40px rgba(0,0,0,.12);
-      box-sizing: border-box;
+      display:flex;
+      justify-content:center;
+      padding: 18px;
     }
 
-    /* HEADER */
-    .title{
+    /* The printable sheet */
+    .sheet{
+      width: 8.5in;
+      min-height: 11in;
+      background: var(--bg);
+      border: 1px solid var(--thin);
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
+      padding: 0.35in;
+      position: relative;
+      overflow:hidden;
+    }
+
+    /* Subtle “tech paper” texture */
+    .sheet:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      opacity:.28;
+      background:
+        linear-gradient(0deg, rgba(0,0,0,.03), rgba(0,0,0,0) 40%),
+        repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0px, rgba(0,0,0,.035) 1px, transparent 1px, transparent 18px);
+      mix-blend-mode:multiply;
+    }
+
+    /* Tiny hex hint, extremely subtle (prints as faint texture) */
+    .sheet:after{
+      content:"";
+      position:absolute;
+      inset:-40px;
+      pointer-events:none;
+      opacity:.06; /* keep tiny */
+      background:
+        radial-gradient(circle at 10px 10px, rgba(0,0,0,.8) 1px, transparent 1px),
+        radial-gradient(circle at 30px 30px, rgba(0,0,0,.8) 1px, transparent 1px);
+      background-size: 36px 36px;
+      transform: rotate(7deg);
+    }
+
+    /* Header bar */
+    .header{
       display:flex;
-      align-items:flex-end;
+      align-items:flex-start;
       justify-content:space-between;
       gap: 12px;
-      border-bottom: 2px solid var(--line);
-      padding-bottom: 8px;
-      margin-bottom: 10px;
+      border: 2px solid var(--accent);
+      padding: 10px 12px;
+      position: relative;
+      background: #fff;
     }
 
-    h1{
-      margin:0;
-      font-size: 28px;
-      letter-spacing: .3px;
-      font-weight: 700;
-    }
-
-    .subtitle{
-      margin: 0 0 2px 0;
-      font-size: 12px;
-      color: var(--muted);
-      text-align:right;
-      max-width: 46ch;
-    }
-
-    /* QUICK META ROW */
-    .meta{
+    .brand{
       display:flex;
-      flex-wrap:wrap;
-      gap:10px 14px;
-      margin: 10px 0 12px;
-      font-size: 12px;
+      flex-direction:column;
+      gap: 2px;
+      line-height:1.1;
     }
-    .meta span{
-      border: 1px solid var(--thin);
-      padding: 4px 8px;
-      border-radius: 999px;
+    .brand .title{
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+    .brand .subtitle{
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing:.02em;
     }
 
-    /* GRID */
+    /* Lantern icon (simple) */
+    .lantern{
+      width: 44px;
+      height: 44px;
+      border: 2px solid var(--accent);
+      border-radius: 10px;
+      position: relative;
+      flex: 0 0 auto;
+      background: linear-gradient(180deg, #fff, var(--panel));
+    }
+    .lantern:before{
+      content:"";
+      position:absolute;
+      left: 50%;
+      top: 8px;
+      width: 18px;
+      height: 22px;
+      transform: translateX(-50%);
+      border: 2px solid var(--accent);
+      border-radius: 6px;
+      background: linear-gradient(180deg, #fff, #f7f7f7);
+    }
+    .lantern:after{
+      content:"";
+      position:absolute;
+      left: 50%;
+      top: 3px;
+      width: 22px;
+      height: 10px;
+      transform: translateX(-50%);
+      border: 2px solid var(--accent);
+      border-bottom: none;
+      border-radius: 12px 12px 0 0;
+      background: transparent;
+    }
+
+    /* Small “file tag” */
+    .tag{
+      position:absolute;
+      right: 10px;
+      bottom: -10px;
+      background: #fff;
+      border: 2px solid var(--accent);
+      padding: 4px 8px;
+      font-size: 10px;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+    }
+
+    /* Grid sections */
     .grid{
+      margin-top: 10px;
       display:grid;
-      grid-template-columns: repeat(12, 1fr);
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .row3{
+      display:grid;
+      grid-template-columns: 2.1fr 1.2fr 1.3fr;
+      gap: 10px;
+    }
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
 
     .box{
-      border: 1.5px solid var(--line);
-      border-radius: var(--radius);
-      padding: 10px 10px 8px;
-      box-sizing:border-box;
+      border: 2px solid var(--accent);
       background: #fff;
+      padding: 10px 12px 12px;
+      position: relative;
     }
 
     .label{
-      font-size: 11px;
-      letter-spacing: .12em;
+      position:absolute;
+      top: -10px;
+      left: 10px;
+      background:#fff;
+      padding: 0 6px;
+      font-size: 10px;
+      letter-spacing:.12em;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 6px;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    }
-
-    .lines{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-top: 2px;
     }
 
     .line{
-      border-bottom: 1px solid var(--thin);
-      height: 18px;
-    }
-
-    .smallline{ height: 16px; }
-
-    /* COLUMN SPANS */
-    .c12{ grid-column: span 12; }
-    .c8{ grid-column: span 12; }
-    .c6{ grid-column: span 12; }
-    .c4{ grid-column: span 12; }
-    .c3{ grid-column: span 12; }
-
-    @media (min-width: 780px){
-      .c8{ grid-column: span 8; }
-      .c6{ grid-column: span 6; }
-      .c4{ grid-column: span 4; }
-      .c3{ grid-column: span 3; }
-    }
-
-    /* STATS */
-    .statrow{
-      display:grid;
-      grid-template-columns: 1fr 60px;
-      gap: 10px;
-      align-items: end;
-      margin-top: 2px;
-    }
-
-    .statname{
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      font-weight: 700;
-      letter-spacing: .2px;
-      margin-bottom: 2px;
-    }
-
-    .statdesc{
-      font-size: 12px;
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .scorebox{
-      border: 1px solid var(--line);
-      height: 34px;
-      border-radius: 8px;
-    }
-
-    .note{
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 8px;
-    }
-
-    /* TRACKS */
-    .pips{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .pip{
-      width: 22px;
       height: 22px;
-      border: 1.5px solid var(--line);
-      border-radius: 6px;
-      box-sizing:border-box;
+      border-bottom: 1px solid var(--thin);
+      margin-top: 10px;
     }
 
-    .piplabel{
-      font-size: 12px;
-      color: var(--muted);
+    /* Stat strip */
+    .stats{
+      border: 2px solid var(--accent);
+      background: #fff;
+      padding: 10px 12px 12px;
+      position: relative;
+    }
+
+    .stats .label{ left: 10px; }
+
+    .statbar{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
       margin-top: 6px;
     }
 
-    .turnpips .pip{
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
+    .stat{
+      border: 1px solid var(--thin);
+      padding: 10px 10px 12px;
+      background: var(--panel);
+      position: relative;
+      min-height: 64px;
     }
 
-    .thresholds{
-      margin-top: 8px;
-      font-size: 12px;
-      color: var(--muted);
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 4px;
-    }
-
-    /* BIG NOTES */
-    .bigarea{
-      height: 220px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background:
-        linear-gradient(#fff, #fff) padding-box,
-        repeating-linear-gradient(
-          to bottom,
-          rgba(0,0,0,0),
-          rgba(0,0,0,0) 20px,
-          rgba(0,0,0,.22) 21px
-        ) border-box;
-      padding: 10px;
-      box-sizing:border-box;
-    }
-
-    /* FOOTER STAMP */
-    .footer{
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1.5px solid var(--line);
-      display:flex;
-      justify-content:space-between;
-      gap: 10px;
-      flex-wrap:wrap;
-      font-size: 11px;
-      letter-spacing: .12em;
+    .statname{
+      font-weight: 800;
+      letter-spacing:.08em;
       text-transform: uppercase;
-      color: var(--muted);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-size: 11px;
+      margin-bottom: 8px;
     }
 
-    /* PRINT */
-    @page{
-      size: letter;
-      margin: 0.4in;
+    /* “Dial” area like a tech slot */
+    .dial{
+      display:flex;
+      align-items:center;
+      gap: 10px;
     }
+
+    .circle{
+      width: 30px;
+      height: 30px;
+      border: 2px solid var(--accent);
+      border-radius: 999px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 800;
+      font-size: 12px;
+      color: var(--ink);
+    }
+
+    .hint{
+      font-size: 10px;
+      color: var(--muted);
+      line-height:1.3;
+    }
+
+    /* Ruled areas */
+    .ruled{
+      margin-top: 10px;
+      border: 1px solid var(--thin2);
+      background:
+        repeating-linear-gradient(
+          180deg,
+          #fff 0px,
+          #fff 22px,
+          rgba(0,0,0,.06) 23px
+        );
+    }
+
+    /* NOTES */
+    .notes{
+      min-height: 3.05in; /* reduced to make room for MARKS */
+    }
+    .notes .ruled{
+      height: 2.55in;
+    }
+
+    /* MARKS */
+    .marks{
+      min-height: 1.85in;
+    }
+    .marks .ruled{
+      height: 1.45in;
+    }
+
+    /* Footer box */
+    .footer{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 14px;
+      border: 2px solid var(--accent);
+      padding: 10px 14px;
+      background:#fff;
+      font-size: 11px;
+      letter-spacing:.02em;
+    }
+
+    .tracks{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .track{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .track-label{
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing:.04em;
+      line-height:1.25;
+    }
+
+    .boxes{
+      display:flex;
+      gap:5px;
+      flex-wrap:wrap;
+    }
+
+    .boxes span{
+      width: 14px;
+      height: 14px;
+      border: 1.8px solid var(--accent);
+      background:#fafafa;
+    }
+
+    /* TURN dots match the sheet language (still boxes, just round) */
+    .turnboxes span{
+      border-radius: 999px;
+      width: 14px;
+      height: 14px;
+    }
+
+    .motto{
+      font-size: 10px;
+      letter-spacing:.14em;
+      color: var(--muted);
+      text-transform: uppercase;
+      white-space: nowrap;
+      align-self:center;
+    }
+
+    /* Print settings */
+    @page { size: Letter; margin: 0.35in; }
     @media print{
       body{ background:#fff; }
-      .page{
+      .page{ padding:0; }
+      .sheet{
         box-shadow:none;
+        border:none;
         margin:0;
-        width:auto;
-        padding:0;
       }
-      a{ color: inherit; text-decoration:none; }
     }
   </style>
 </head>
-
 <body>
   <div class="page">
-    <div class="title">
-      <div>
-        <h1>FRACTURED LIGHT</h1>
-      </div>
-      <p class="subtitle">
-        Printable Character Sheet<br/>
-        A grim echo of Lanternlight: cost, escalation, no return.
-      </p>
-    </div>
+    <div class="sheet">
 
-    <div class="meta">
-      <span><strong>Roll:</strong> d20 + stat vs DR</span>
-      <span><strong>Fractured:</strong> succeed within 2, pay a cost</span>
-      <span><strong>Helping:</strong> costs 1 LIGHT</span>
-      <span><strong>TURN:</strong> 0 → 6 escalation</span>
-    </div>
-
-    <div class="grid">
-      <!-- Identity -->
-      <div class="box c6">
-        <div class="label">Name</div>
-        <div class="lines">
-          <div class="line"></div>
+      <!-- HEADER -->
+      <div class="header">
+        <div class="brand">
+          <div class="title">Fractured Light</div>
+          <div class="subtitle">Character Sheet • pressure, cost, and no return</div>
         </div>
+        <div class="lantern" aria-hidden="true"></div>
+        <div class="tag">FL-01</div>
       </div>
 
-      <div class="box c6">
-        <div class="label">Creature / Body</div>
-        <div class="lines">
-          <div class="line"></div>
-        </div>
-      </div>
+      <div class="grid">
 
-      <div class="box c6">
-        <div class="label">Role</div>
-        <div class="lines">
-          <div class="line"></div>
-        </div>
-      </div>
-
-      <div class="box c6">
-        <div class="label">Designation / Call Sign</div>
-        <div class="lines">
-          <div class="line"></div>
-        </div>
-      </div>
-
-      <div class="box c6">
-        <div class="label">Good At</div>
-        <div class="lines">
-          <div class="line"></div>
-          <div class="line"></div>
-        </div>
-      </div>
-
-      <div class="box c6">
-        <div class="label">Afraid Of</div>
-        <div class="lines">
-          <div class="line"></div>
-          <div class="line"></div>
-        </div>
-      </div>
-
-      <!-- Stats -->
-      <div class="box c8">
-        <div class="label">Stats</div>
-
-        <div class="statrow">
-          <div>
-            <div class="statname">TRAIL</div>
-            <p class="statdesc">Paths, navigation, movement under pressure.</p>
+        <!-- IDENTITY -->
+        <div class="row3">
+          <div class="box">
+            <div class="label">Name</div>
+            <div class="line"></div>
           </div>
-          <div class="scorebox"></div>
-        </div>
-
-        <div class="statrow">
-          <div>
-            <div class="statname">CARE</div>
-            <p class="statdesc">Repair, tending, keeping others steady.</p>
+          <div class="box">
+            <div class="label">Creature</div>
+            <div class="line"></div>
           </div>
-          <div class="scorebox"></div>
-        </div>
-
-        <div class="statrow">
-          <div>
-            <div class="statname">CLEVER</div>
-            <p class="statdesc">Noticing, problem-solving, talking your way through.</p>
+          <div class="box">
+            <div class="label">Role</div>
+            <div class="line"></div>
           </div>
-          <div class="scorebox"></div>
         </div>
 
-        <div class="statrow">
-          <div>
-            <div class="statname">ENDURE</div>
-            <p class="statdesc">Cold, fear, pain, refusing to stop.</p>
+        <!-- TRAITS -->
+        <div class="row2">
+          <div class="box">
+            <div class="label">Good At</div>
+            <div class="line"></div>
           </div>
-          <div class="scorebox"></div>
+          <div class="box">
+            <div class="label">Afraid Of</div>
+            <div class="line"></div>
+          </div>
         </div>
 
-        <p class="note"><strong>Assign:</strong> +2, +1, 0, −1 across the four stats (Lanternlight echo).</p>
+        <!-- STATS -->
+        <div class="stats">
+          <div class="label">Stats (assign +2, +1, 0, −1)</div>
+          <div class="statbar">
+            <div class="stat">
+              <div class="statname">Trail</div>
+              <div class="dial">
+                <div class="circle"></div>
+                <div class="hint">Paths, navigation, movement under pressure.</div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="statname">Care</div>
+              <div class="dial">
+                <div class="circle"></div>
+                <div class="hint">Repair, tending, keeping others steady.</div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="statname">Clever</div>
+              <div class="dial">
+                <div class="circle"></div>
+                <div class="hint">Noticing, puzzles, talking.</div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="statname">Endure</div>
+              <div class="dial">
+                <div class="circle"></div>
+                <div class="hint">Cold, fear, fatigue, grit.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTES -->
+        <div class="box notes">
+          <div class="label">Notes & Journey Details</div>
+          <div class="ruled" aria-hidden="true"></div>
+        </div>
+
+        <!-- MARKS -->
+        <div class="box marks">
+          <div class="label">Marks (permanent complications)</div>
+          <div class="ruled" aria-hidden="true"></div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+          <div class="tracks">
+            <div class="track">
+              <div class="track-label">
+                <strong>LIGHT</strong> is personal · start at <strong>6–8</strong>
+              </div>
+              <div class="boxes" aria-hidden="true">
+                <!-- 10 boxes -->
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+
+            <div class="track">
+              <div class="track-label">
+                <strong>TURN</strong> track · mark current <strong>0–6</strong>
+              </div>
+              <div class="boxes turnboxes" aria-hidden="true">
+                <!-- 7 dots (0..6) -->
+                <span title="0"></span><span title="1"></span><span title="2"></span><span title="3"></span>
+                <span title="4"></span><span title="5"></span><span title="6"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="motto">THE EVENING TURN IS IN EFFECT.</div>
+        </div>
+
       </div>
-
-      <!-- LIGHT / TURN -->
-      <div class="box c4">
-        <div class="label">LIGHT</div>
-        <div class="pips" aria-label="Light track">
-          <!-- 10 pips -->
-          <div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div>
-          <div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div>
-        </div>
-        <div class="piplabel">Start at 6–8. Cross off as you lose LIGHT.</div>
-        <div class="note"><strong>At 0:</strong> you break. You remain present, but unreliable.</div>
-
-        <hr style="border:0;height:1px;background:#222;opacity:.35;margin:10px 0;"/>
-
-        <div class="label">TURN (0 → 6)</div>
-        <div class="pips turnpips" aria-label="Turn track">
-          <!-- 7 pips: 0..6 -->
-          <div class="pip" title="0"></div>
-          <div class="pip" title="1"></div>
-          <div class="pip" title="2"></div>
-          <div class="pip" title="3"></div>
-          <div class="pip" title="4"></div>
-          <div class="pip" title="5"></div>
-          <div class="pip" title="6"></div>
-        </div>
-        <div class="thresholds">
-          <div><strong>2:</strong> The world shifts</div>
-          <div><strong>4:</strong> You are not alone</div>
-          <div><strong>6:</strong> The Turn completes</div>
-        </div>
-      </div>
-
-      <!-- Marks -->
-      <div class="box c12">
-        <div class="label">MARKS (Permanent complications)</div>
-        <div class="lines">
-          <div class="line smallline"></div>
-          <div class="line smallline"></div>
-          <div class="line smallline"></div>
-          <div class="line smallline"></div>
-          <div class="line smallline"></div>
-          <div class="line smallline"></div>
-        </div>
-        <p class="note">Marks do not clear between scenes. Use them as leverage and story hooks.</p>
-      </div>
-
-      <!-- Notes -->
-      <div class="box c12">
-        <div class="label">Notes / Gear / Promises / What SNOW-E keeps saying</div>
-        <div class="bigarea"></div>
-      </div>
-    </div>
-
-    <div class="footer">
-      <span>Fractured Light • Character Sheet</span>
-      <span>THE EVENING TURN IS IN EFFECT</span>
     </div>
   </div>
 </body>
