@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fractured Light • Character Sheet</title>
+  <meta name="description" content="Fractured Light character sheet: grim echo of Lanternlight with Light, Marks, and Turn tracking." />
+  <style>
+    :root{
+      --bg0:#05060a;
+      --bg1:#070913;
+      --ink:#e9ecff;
+      --muted:#b8bfdc;
+      --dim:#8890b3;
+      --line:#1c2238;
+      --panel:#0b0f1f;
+      --panel2:#0a1026;
+      --accent:#c8d2ff;
+      --danger:#ff4d6d;
+      --warn:#ffd166;
+
+      --radius: 14px;
+      --w: 960px;
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+    }
+
+    /* subtle grain/scanlines */
+    body:before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.02),
+          rgba(255,255,255,.02) 1px,
+          rgba(0,0,0,0) 2px,
+          rgba(0,0,0,0) 4px
+        ),
+        radial-gradient(1000px 600px at 20% 0%, rgba(200,210,255,.10), rgba(0,0,0,0)),
+        radial-gradient(900px 700px at 90% 20%, rgba(255,77,109,.06), rgba(0,0,0,0));
+      mix-blend-mode:screen;
+      opacity:.33;
+    }
+
+    html,body{
+      background: linear-gradient(180deg, var(--bg0), var(--bg1));
+      color: var(--ink);
+      margin:0;
+      padding:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      line-height:1.5;
+    }
+
+    a{ color: var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .wrap{
+      max-width: var(--w);
+      margin: 0 auto;
+      padding: 34px 18px 64px;
+    }
+
+    header{
+      padding: 18px 18px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header:after{
+      content:"";
+      position:absolute;
+      inset:-80px -80px auto auto;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,77,109,.22), rgba(0,0,0,0) 60%);
+      transform: rotate(12deg);
+      opacity:.7;
+      pointer-events:none;
+    }
+
+    h1{
+      margin:0 0 6px;
+      font-weight: 780;
+      letter-spacing:.2px;
+      font-size: clamp(2rem, 3.2vw, 2.55rem);
+    }
+    .subtitle{
+      margin: 0 0 12px;
+      color: var(--muted);
+      max-width: 80ch;
+    }
+
+    .meta{
+      margin-top: 10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      color: var(--dim);
+      font-size: .96rem;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(11,15,31,.55);
+      backdrop-filter: blur(4px);
+    }
+    .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: rgba(255,255,255,.18);
+      box-shadow: 0 0 0 2px rgba(255,255,255,.03);
+    }
+    .dot.warn{ background: rgba(255,209,102,.70); }
+    .dot.danger{ background: rgba(255,77,109,.72); }
+    .dot.ok{ background: rgba(200,210,255,.62); }
+
+    nav{
+      margin-top: 14px;
+      font-size: .95rem;
+      color: var(--dim);
+    }
+    nav a{
+      display:inline-block;
+      margin-right: 12px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px dashed rgba(200,210,255,.25);
+      background: rgba(10,16,38,.25);
+    }
+
+    main{ margin-top: 18px; }
+
+    section{
+      margin-top: 16px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(11,15,31,.72), rgba(11,15,31,.52));
+      box-shadow: 0 10px 35px rgba(0,0,0,.35);
+    }
+
+    h2{
+      margin:0 0 10px;
+      font-size: 1.2rem;
+      letter-spacing:.2px;
+    }
+    h3{
+      margin: 12px 0 8px;
+      font-size: 1.03rem;
+      color: var(--accent);
+      letter-spacing:.2px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .card{
+      grid-column: span 12;
+      padding: 12px;
+      border: 1px solid rgba(200,210,255,.14);
+      border-radius: 12px;
+      background: rgba(5,6,10,.35);
+    }
+    @media (min-width: 920px){
+      .card.third{ grid-column: span 4; }
+      .card.half{ grid-column: span 6; }
+      .card.twoThird{ grid-column: span 8; }
+    }
+
+    .label{
+      font-size: .82rem;
+      color: var(--dim);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .desc{ color: var(--muted); margin: 6px 0 0; font-size: .96rem; }
+
+    input[type="text"], input[type="number"], textarea{
+      width: 100%;
+      box-sizing:border-box;
+      background: rgba(200,210,255,.05);
+      border: 1px solid rgba(200,210,255,.16);
+      border-radius: 12px;
+      padding: 10px 10px;
+      color: var(--ink);
+      outline: none;
+      font-size: 1rem;
+    }
+    input[type="number"]{ padding: 10px 12px; }
+    textarea{ min-height: 140px; resize: vertical; }
+
+    input::placeholder, textarea::placeholder{ color: rgba(184,191,220,.55); }
+
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top: 8px;
+      color: var(--muted);
+    }
+
+    /* trackers */
+    .track{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top: 8px;
+    }
+
+    .pip{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(200,210,255,.14);
+      background: rgba(11,15,31,.35);
+      user-select:none;
+    }
+
+    .pip input{ transform: scale(1.05); }
+
+    .small{
+      font-size:.92rem;
+      color: var(--dim);
+    }
+
+    .callout{
+      margin-top: 10px;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(200,210,255,.18);
+      background: linear-gradient(180deg, rgba(10,16,38,.55), rgba(10,16,38,.38));
+      color: var(--muted);
+    }
+    .dangerbox{
+      border-color: rgba(255,77,109,.28);
+      background: linear-gradient(180deg, rgba(255,77,109,.10), rgba(10,16,38,.35));
+    }
+
+    hr{
+      border:0;
+      height:1px;
+      background: linear-gradient(90deg, rgba(0,0,0,0), rgba(200,210,255,.18), rgba(0,0,0,0));
+      margin: 14px 0;
+    }
+
+    footer{
+      margin-top: 18px;
+      color: var(--dim);
+      font-size: .92rem;
+      padding: 10px 2px;
+    }
+
+    .stamp{
+      margin-top: 10px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      color: rgba(200,210,255,.55);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: .78rem;
+      padding-top: 12px;
+      border-top: 1px solid rgba(200,210,255,.12);
+    }
+
+    @media print{
+      body:before{ display:none; }
+      a{ color:#000; }
+      html,body{ background:#fff; color:#000; }
+      header, section{ box-shadow:none; }
+      header, section{ border-color:#bbb; background:#fff; }
+      input, textarea{ border-color:#999; background:#fff; color:#000; }
+      .card{ border-color:#bbb; background:#fff; }
+      .pill{ border-color:#bbb; background:#fff; }
+      .callout{ border-color:#bbb; background:#fff; }
+      .dangerbox{ border-color:#bbb; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Fractured Light</h1>
+      <p class="subtitle">Character Sheet • pressure, cost, and no return</p>
+
+      <div class="meta">
+        <span class="pill"><span class="dot ok"></span> Roll: <strong>d20 + stat</strong></span>
+        <span class="pill"><span class="dot warn"></span> LIGHT: <strong>6–8</strong> (start)</span>
+        <span class="pill"><span class="dot danger"></span> TURN: <strong>0 → 6</strong> (escalation)</span>
+      </div>
+
+      <nav>
+        <a href="/LLRules/">Lanternlight Rules</a>
+        <a href="/fractured-light/">Fractured Light Rules</a>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <h2>Identity</h2>
+        <div class="grid">
+          <div class="card half">
+            <div class="label">Name</div>
+            <input type="text" placeholder="Name" />
+          </div>
+          <div class="card half">
+            <div class="label">Creature / Body</div>
+            <input type="text" placeholder="What you are (or what you were)" />
+          </div>
+
+          <div class="card half">
+            <div class="label">Role</div>
+            <input type="text" placeholder="Engineer, Medic, Scout, Watcher…" />
+          </div>
+          <div class="card half">
+            <div class="label">Designation</div>
+            <input type="text" placeholder="FL-01 (or any tag you like)" />
+          </div>
+
+          <div class="card half">
+            <div class="label">Good At</div>
+            <input type="text" placeholder="One thing you can do when the light fails" />
+          </div>
+          <div class="card half">
+            <div class="label">Afraid Of</div>
+            <input type="text" placeholder="A fear the system can exploit" />
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Echo:</strong> These prompts mirror Lanternlight’s anchors. :contentReference[oaicite:1]{index=1}
+          Here, fear isn’t flavor. It’s leverage.
+        </div>
+      </section>
+
+      <section>
+        <h2>Stats</h2>
+        <p class="desc">Assign <strong>+2, +1, 0, −1</strong> across the four stats (same set as Lanternlight). :contentReference[oaicite:2]{index=2}</p>
+
+        <div class="grid">
+          <div class="card third">
+            <div class="label">Trail</div>
+            <div class="row">
+              <input type="number" min="-3" max="5" placeholder="0" />
+              <span class="small">Paths, navigation, safe travel.</span>
+            </div>
+          </div>
+
+          <div class="card third">
+            <div class="label">Care</div>
+            <div class="row">
+              <input type="number" min="-3" max="5" placeholder="0" />
+              <span class="small">Repair, tending, keeping others steady.</span>
+            </div>
+          </div>
+
+          <div class="card third">
+            <div class="label">Clever</div>
+            <div class="row">
+              <input type="number" min="-3" max="5" placeholder="0" />
+              <span class="small">Noticing, puzzles, talking.</span>
+            </div>
+          </div>
+
+          <div class="card third">
+            <div class="label">Endure</div>
+            <div class="row">
+              <input type="number" min="-3" max="5" placeholder="0" />
+              <span class="small">Cold, fear, fatigue, grit.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout dangerbox">
+          <strong>Roll reminder:</strong> Success (≥ DR). Fractured success (DR−1/2) succeeds but costs. Failure (DR−3+) breaks things.
+        </div>
+      </section>
+
+      <section>
+        <h2>LIGHT</h2>
+        <p class="desc">Mark remaining LIGHT. Start at <strong>6–8</strong>. At <strong>0</strong>, you break (freeze, panic, shutdown, surrender).</p>
+
+        <div class="grid">
+          <div class="card twoThird">
+            <div class="label">LIGHT Track (10 pips)</div>
+            <div class="track" aria-label="Light track">
+              <!-- default checked = you can change if you want 6–8 start -->
+              <label class="pip"><input type="checkbox" checked /> 1</label>
+              <label class="pip"><input type="checkbox" checked /> 2</label>
+              <label class="pip"><input type="checkbox" checked /> 3</label>
+              <label class="pip"><input type="checkbox" checked /> 4</label>
+              <label class="pip"><input type="checkbox" checked /> 5</label>
+              <label class="pip"><input type="checkbox" checked /> 6</label>
+              <label class="pip"><input type="checkbox" /> 7</label>
+              <label class="pip"><input type="checkbox" /> 8</label>
+              <label class="pip"><input type="checkbox" /> 9</label>
+              <label class="pip"><input type="checkbox" /> 10</label>
+            </div>
+            <p class="small" style="margin-top:10px;">
+              Tip: checked = remaining. Uncheck as you lose LIGHT.
+            </p>
+          </div>
+
+          <div class="card third">
+            <div class="label">Helping</div>
+            <p class="desc"><strong>Helping costs 1 LIGHT</strong> to assist another player.</p>
+            <hr />
+            <div class="label">0 LIGHT means</div>
+            <p class="desc">You’re still here. But not reliable. The GM can pressure your choices.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>TURN (0 → 6)</h2>
+        <p class="desc">The Evening Turn is escalation made visible. Mark current TURN. At <strong>6</strong>, the Turn completes.</p>
+
+        <div class="grid">
+          <div class="card half">
+            <div class="label">TURN Track</div>
+            <div class="track" aria-label="Turn track">
+              <label class="pip"><input type="radio" name="turn" checked /> 0</label>
+              <label class="pip"><input type="radio" name="turn" /> 1</label>
+              <label class="pip"><input type="radio" name="turn" /> 2</label>
+              <label class="pip"><input type="radio" name="turn" /> 3</label>
+              <label class="pip"><input type="radio" name="turn" /> 4</label>
+              <label class="pip"><input type="radio" name="turn" /> 5</label>
+              <label class="pip"><input type="radio" name="turn" /> 6</label>
+            </div>
+          </div>
+
+          <div class="card half">
+            <div class="label">Thresholds</div>
+            <ul class="desc" style="margin:0 0 0 1.1rem;">
+              <li><strong>2:</strong> the world shifts</li>
+              <li><strong>4:</strong> you are not alone</li>
+              <li><strong>6:</strong> the Turn completes</li>
+            </ul>
+            <p class="small" style="margin-top:10px;">
+              Advance TURN on failed rolls, loud action, wasted time, or dragging combat.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>MARKS</h2>
+        <p class="desc">Permanent complications. They don’t clear between scenes.</p>
+
+        <div class="grid">
+          <div class="card half">
+            <div class="label">Marks (list them)</div>
+            <textarea placeholder="Examples: Cracked Visor • Shaking Hands • Static in the Head • Noticed Below…"></textarea>
+          </div>
+          <div class="card half">
+            <div class="label">Mark Triggers / Notes</div>
+            <textarea placeholder="When do they bite? What do they cost? Who/what is attached to them?"></textarea>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Lanternlight tie:</strong> Where Lanternlight softened consequences, Marks make them persistent. :contentReference[oaicite:3]{index=3}
+        </div>
+      </section>
+
+      <section>
+        <h2>Notes & Journey Details</h2>
+        <textarea placeholder="Gear, relationships, what you promised, what you left behind, what SNOW-E keeps saying…"></textarea>
+
+        <div class="stamp">
+          <span>FL-01 • Character Sheet</span>
+          <span>THE EVENING TURN IS IN EFFECT</span>
+        </div>
+      </section>
+
+      <footer>
+        Fractured Light is an echo of Lanternlight’s structure, sharpened into cost and escalation. :contentReference[oaicite:4]{index=4}
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
