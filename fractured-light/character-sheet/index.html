@@ -100,7 +100,7 @@
       letter-spacing:.02em;
     }
 
-   /* Bomb / Beacon icon */
+/* Beacon / Device Panel */
 .lantern{
   width: 44px;
   height: 44px;
@@ -109,32 +109,30 @@
   position: relative;
   flex: 0 0 auto;
   background: linear-gradient(180deg, #fff, var(--panel));
+  overflow:hidden;
 }
-/* Main bomb body */
+/* Inner panel (glass window) */
 .lantern:before{
   content:"";
   position:absolute;
-  left:50%;
-  top:50%;
-  width: 20px;
-  height: 20px;
-  transform: translate(-50%, -40%);
+  inset: 6px;
   border: 2px solid var(--accent);
-  border-radius: 999px;
-  background:#fff;
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, #ffffff, #f4f4f4);
 }
-/* Fuse */
+/* Core device (beacon charge) */
 .lantern:after{
   content:"";
   position:absolute;
   left:50%;
-  top:6px;
-  width: 16px;
-  height: 16px;
-  transform: translateX(-50%);
-  border-top: 2px solid var(--accent);
-  border-right: 2px solid var(--accent);
+  top:50%;
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--accent);
   border-radius: 50%;
+  background:#fff;
 }
     .lantern span{
   position:absolute;
@@ -145,6 +143,30 @@
   background: var(--accent);
   border-radius:999px;
 }
+    /* tiny indicator light */
+.lantern span{
+  position:absolute;
+  top:6px;
+  right:6px;
+  width:4px;
+  height:4px;
+  background: var(--accent);
+  border-radius:50%;
+}
+
+/* corner bolts */
+.lantern i{
+  position:absolute;
+  width:3px;
+  height:3px;
+  background: var(--accent);
+  border-radius:50%;
+}
+
+.lantern i:nth-child(1){ top:6px; left:6px; }
+.lantern i:nth-child(2){ top:6px; right:6px; }
+.lantern i:nth-child(3){ bottom:6px; left:6px; }
+.lantern i:nth-child(4){ bottom:6px; right:6px; }
 
     /* Small “file tag” */
     .tag{
@@ -377,7 +399,10 @@
           <div class="title">Fractured Light</div>
           <div class="subtitle">Character Sheet • pressure, cost, and no return</div>
         </div>
-        <div class="lantern"><span></span></div>
+        <div class="lantern">
+  <i></i><i></i><i></i><i></i>
+  <span></span>
+</div>
         <div class="tag">FL-01</div>
       </div>
 
