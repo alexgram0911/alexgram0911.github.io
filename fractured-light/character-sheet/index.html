@@ -3,499 +3,414 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Fractured Light • Character Sheet</title>
-  <meta name="description" content="Fractured Light character sheet: grim echo of Lanternlight with Light, Marks, and Turn tracking." />
+  <title>Fractured Light • Printable Character Sheet</title>
   <style>
     :root{
-      --bg0:#05060a;
-      --bg1:#070913;
-      --ink:#e9ecff;
-      --muted:#b8bfdc;
-      --dim:#8890b3;
-      --line:#1c2238;
-      --panel:#0b0f1f;
-      --panel2:#0a1026;
-      --accent:#c8d2ff;
-      --danger:#ff4d6d;
-      --warn:#ffd166;
+      --ink:#111;
+      --muted:#333;
+      --line:#222;
+      --thin:#555;
+      --paper:#fff;
 
-      --radius: 14px;
-      --w: 960px;
-      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --w: 8.5in;   /* US Letter */
+      --h: 11in;
+      --pad: 0.45in;
+      --radius: 10px;
     }
 
-    /* subtle grain/scanlines */
-    body:before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      background:
-        repeating-linear-gradient(
-          to bottom,
-          rgba(255,255,255,.02),
-          rgba(255,255,255,.02) 1px,
-          rgba(0,0,0,0) 2px,
-          rgba(0,0,0,0) 4px
-        ),
-        radial-gradient(1000px 600px at 20% 0%, rgba(200,210,255,.10), rgba(0,0,0,0)),
-        radial-gradient(900px 700px at 90% 20%, rgba(255,77,109,.06), rgba(0,0,0,0));
-      mix-blend-mode:screen;
-      opacity:.33;
-    }
-
-    html,body{
-      background: linear-gradient(180deg, var(--bg0), var(--bg1));
-      color: var(--ink);
+    html, body{
       margin:0;
       padding:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      line-height:1.5;
+      background:#f3f3f3;
+      color: var(--ink);
+      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+      line-height:1.25;
     }
 
-    a{ color: var(--accent); text-decoration:none; }
-    a:hover{ text-decoration:underline; }
-
-    .wrap{
-      max-width: var(--w);
-      margin: 0 auto;
-      padding: 34px 18px 64px;
+    /* PAGE */
+    .page{
+      width: min(var(--w), 100%);
+      background: var(--paper);
+      margin: 24px auto;
+      padding: var(--pad);
+      box-shadow: 0 10px 40px rgba(0,0,0,.12);
+      box-sizing: border-box;
     }
 
-    header{
-      padding: 18px 18px 16px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
-    }
-
-    header:after{
-      content:"";
-      position:absolute;
-      inset:-80px -80px auto auto;
-      width: 240px;
-      height: 240px;
-      background: radial-gradient(circle at 30% 30%, rgba(255,77,109,.22), rgba(0,0,0,0) 60%);
-      transform: rotate(12deg);
-      opacity:.7;
-      pointer-events:none;
+    /* HEADER */
+    .title{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap: 12px;
+      border-bottom: 2px solid var(--line);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     h1{
-      margin:0 0 6px;
-      font-weight: 780;
-      letter-spacing:.2px;
-      font-size: clamp(2rem, 3.2vw, 2.55rem);
-    }
-    .subtitle{
-      margin: 0 0 12px;
-      color: var(--muted);
-      max-width: 80ch;
+      margin:0;
+      font-size: 28px;
+      letter-spacing: .3px;
+      font-weight: 700;
     }
 
+    .subtitle{
+      margin: 0 0 2px 0;
+      font-size: 12px;
+      color: var(--muted);
+      text-align:right;
+      max-width: 46ch;
+    }
+
+    /* QUICK META ROW */
     .meta{
-      margin-top: 10px;
       display:flex;
       flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-      color: var(--dim);
-      font-size: .96rem;
+      gap:10px 14px;
+      margin: 10px 0 12px;
+      font-size: 12px;
     }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 7px 10px;
+    .meta span{
+      border: 1px solid var(--thin);
+      padding: 4px 8px;
       border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(11,15,31,.55);
-      backdrop-filter: blur(4px);
-    }
-    .dot{
-      width:8px; height:8px; border-radius:999px;
-      background: rgba(255,255,255,.18);
-      box-shadow: 0 0 0 2px rgba(255,255,255,.03);
-    }
-    .dot.warn{ background: rgba(255,209,102,.70); }
-    .dot.danger{ background: rgba(255,77,109,.72); }
-    .dot.ok{ background: rgba(200,210,255,.62); }
-
-    nav{
-      margin-top: 14px;
-      font-size: .95rem;
-      color: var(--dim);
-    }
-    nav a{
-      display:inline-block;
-      margin-right: 12px;
-      padding: 6px 8px;
-      border-radius: 10px;
-      border: 1px dashed rgba(200,210,255,.25);
-      background: rgba(10,16,38,.25);
     }
 
-    main{ margin-top: 18px; }
-
-    section{
-      margin-top: 16px;
-      padding: 16px 18px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(11,15,31,.72), rgba(11,15,31,.52));
-      box-shadow: 0 10px 35px rgba(0,0,0,.35);
-    }
-
-    h2{
-      margin:0 0 10px;
-      font-size: 1.2rem;
-      letter-spacing:.2px;
-    }
-    h3{
-      margin: 12px 0 8px;
-      font-size: 1.03rem;
-      color: var(--accent);
-      letter-spacing:.2px;
-    }
-
+    /* GRID */
     .grid{
       display:grid;
       grid-template-columns: repeat(12, 1fr);
-      gap: 12px;
-      margin-top: 10px;
+      gap: 10px;
     }
-    .card{
-      grid-column: span 12;
-      padding: 12px;
-      border: 1px solid rgba(200,210,255,.14);
-      border-radius: 12px;
-      background: rgba(5,6,10,.35);
-    }
-    @media (min-width: 920px){
-      .card.third{ grid-column: span 4; }
-      .card.half{ grid-column: span 6; }
-      .card.twoThird{ grid-column: span 8; }
+
+    .box{
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px 10px 8px;
+      box-sizing:border-box;
+      background: #fff;
     }
 
     .label{
-      font-size: .82rem;
-      color: var(--dim);
+      font-size: 11px;
       letter-spacing: .12em;
       text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .desc{ color: var(--muted); margin: 6px 0 0; font-size: .96rem; }
-
-    input[type="text"], input[type="number"], textarea{
-      width: 100%;
-      box-sizing:border-box;
-      background: rgba(200,210,255,.05);
-      border: 1px solid rgba(200,210,255,.16);
-      border-radius: 12px;
-      padding: 10px 10px;
-      color: var(--ink);
-      outline: none;
-      font-size: 1rem;
-    }
-    input[type="number"]{ padding: 10px 12px; }
-    textarea{ min-height: 140px; resize: vertical; }
-
-    input::placeholder, textarea::placeholder{ color: rgba(184,191,220,.55); }
-
-    .row{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      margin-top: 8px;
       color: var(--muted);
+      margin-bottom: 6px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
-    /* trackers */
-    .track{
+    .lines{
       display:flex;
-      gap:8px;
-      flex-wrap:wrap;
+      flex-direction:column;
+      gap:10px;
+      margin-top: 2px;
+    }
+
+    .line{
+      border-bottom: 1px solid var(--thin);
+      height: 18px;
+    }
+
+    .smallline{ height: 16px; }
+
+    /* COLUMN SPANS */
+    .c12{ grid-column: span 12; }
+    .c8{ grid-column: span 12; }
+    .c6{ grid-column: span 12; }
+    .c4{ grid-column: span 12; }
+    .c3{ grid-column: span 12; }
+
+    @media (min-width: 780px){
+      .c8{ grid-column: span 8; }
+      .c6{ grid-column: span 6; }
+      .c4{ grid-column: span 4; }
+      .c3{ grid-column: span 3; }
+    }
+
+    /* STATS */
+    .statrow{
+      display:grid;
+      grid-template-columns: 1fr 60px;
+      gap: 10px;
+      align-items: end;
+      margin-top: 2px;
+    }
+
+    .statname{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-weight: 700;
+      letter-spacing: .2px;
+      margin-bottom: 2px;
+    }
+
+    .statdesc{
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .scorebox{
+      border: 1px solid var(--line);
+      height: 34px;
+      border-radius: 8px;
+    }
+
+    .note{
+      font-size: 12px;
+      color: var(--muted);
       margin-top: 8px;
+    }
+
+    /* TRACKS */
+    .pips{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px;
+      margin-top: 4px;
     }
 
     .pip{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 10px;
-      border-radius: 12px;
-      border: 1px solid rgba(200,210,255,.14);
-      background: rgba(11,15,31,.35);
-      user-select:none;
+      width: 22px;
+      height: 22px;
+      border: 1.5px solid var(--line);
+      border-radius: 6px;
+      box-sizing:border-box;
     }
 
-    .pip input{ transform: scale(1.05); }
-
-    .small{
-      font-size:.92rem;
-      color: var(--dim);
-    }
-
-    .callout{
-      margin-top: 10px;
-      padding: 12px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(200,210,255,.18);
-      background: linear-gradient(180deg, rgba(10,16,38,.55), rgba(10,16,38,.38));
+    .piplabel{
+      font-size: 12px;
       color: var(--muted);
-    }
-    .dangerbox{
-      border-color: rgba(255,77,109,.28);
-      background: linear-gradient(180deg, rgba(255,77,109,.10), rgba(10,16,38,.35));
+      margin-top: 6px;
     }
 
-    hr{
-      border:0;
-      height:1px;
-      background: linear-gradient(90deg, rgba(0,0,0,0), rgba(200,210,255,.18), rgba(0,0,0,0));
-      margin: 14px 0;
+    .turnpips .pip{
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
     }
 
-    footer{
-      margin-top: 18px;
-      color: var(--dim);
-      font-size: .92rem;
-      padding: 10px 2px;
+    .thresholds{
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 4px;
     }
 
-    .stamp{
-      margin-top: 10px;
+    /* BIG NOTES */
+    .bigarea{
+      height: 220px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        linear-gradient(#fff, #fff) padding-box,
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0,0,0,0),
+          rgba(0,0,0,0) 20px,
+          rgba(0,0,0,.22) 21px
+        ) border-box;
+      padding: 10px;
+      box-sizing:border-box;
+    }
+
+    /* FOOTER STAMP */
+    .footer{
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1.5px solid var(--line);
       display:flex;
       justify-content:space-between;
-      gap:10px;
+      gap: 10px;
       flex-wrap:wrap;
-      color: rgba(200,210,255,.55);
-      letter-spacing: .08em;
+      font-size: 11px;
+      letter-spacing: .12em;
       text-transform: uppercase;
-      font-size: .78rem;
-      padding-top: 12px;
-      border-top: 1px solid rgba(200,210,255,.12);
+      color: var(--muted);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
+    /* PRINT */
+    @page{
+      size: letter;
+      margin: 0.4in;
+    }
     @media print{
-      body:before{ display:none; }
-      a{ color:#000; }
-      html,body{ background:#fff; color:#000; }
-      header, section{ box-shadow:none; }
-      header, section{ border-color:#bbb; background:#fff; }
-      input, textarea{ border-color:#999; background:#fff; color:#000; }
-      .card{ border-color:#bbb; background:#fff; }
-      .pill{ border-color:#bbb; background:#fff; }
-      .callout{ border-color:#bbb; background:#fff; }
-      .dangerbox{ border-color:#bbb; }
+      body{ background:#fff; }
+      .page{
+        box-shadow:none;
+        margin:0;
+        width:auto;
+        padding:0;
+      }
+      a{ color: inherit; text-decoration:none; }
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Fractured Light</h1>
-      <p class="subtitle">Character Sheet • pressure, cost, and no return</p>
+  <div class="page">
+    <div class="title">
+      <div>
+        <h1>FRACTURED LIGHT</h1>
+      </div>
+      <p class="subtitle">
+        Printable Character Sheet<br/>
+        A grim echo of Lanternlight: cost, escalation, no return.
+      </p>
+    </div>
 
-      <div class="meta">
-        <span class="pill"><span class="dot ok"></span> Roll: <strong>d20 + stat</strong></span>
-        <span class="pill"><span class="dot warn"></span> LIGHT: <strong>6–8</strong> (start)</span>
-        <span class="pill"><span class="dot danger"></span> TURN: <strong>0 → 6</strong> (escalation)</span>
+    <div class="meta">
+      <span><strong>Roll:</strong> d20 + stat vs DR</span>
+      <span><strong>Fractured:</strong> succeed within 2, pay a cost</span>
+      <span><strong>Helping:</strong> costs 1 LIGHT</span>
+      <span><strong>TURN:</strong> 0 → 6 escalation</span>
+    </div>
+
+    <div class="grid">
+      <!-- Identity -->
+      <div class="box c6">
+        <div class="label">Name</div>
+        <div class="lines">
+          <div class="line"></div>
+        </div>
       </div>
 
-      <nav>
-        <a href="/LLRules/">Lanternlight Rules</a>
-        <a href="/fractured-light/">Fractured Light Rules</a>
-      </nav>
-    </header>
+      <div class="box c6">
+        <div class="label">Creature / Body</div>
+        <div class="lines">
+          <div class="line"></div>
+        </div>
+      </div>
 
-    <main>
-      <section>
-        <h2>Identity</h2>
-        <div class="grid">
-          <div class="card half">
-            <div class="label">Name</div>
-            <input type="text" placeholder="Name" />
-          </div>
-          <div class="card half">
-            <div class="label">Creature / Body</div>
-            <input type="text" placeholder="What you are (or what you were)" />
-          </div>
+      <div class="box c6">
+        <div class="label">Role</div>
+        <div class="lines">
+          <div class="line"></div>
+        </div>
+      </div>
 
-          <div class="card half">
-            <div class="label">Role</div>
-            <input type="text" placeholder="Engineer, Medic, Scout, Watcher…" />
-          </div>
-          <div class="card half">
-            <div class="label">Designation</div>
-            <input type="text" placeholder="FL-01 (or any tag you like)" />
-          </div>
+      <div class="box c6">
+        <div class="label">Designation / Call Sign</div>
+        <div class="lines">
+          <div class="line"></div>
+        </div>
+      </div>
 
-          <div class="card half">
-            <div class="label">Good At</div>
-            <input type="text" placeholder="One thing you can do when the light fails" />
+      <div class="box c6">
+        <div class="label">Good At</div>
+        <div class="lines">
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+      </div>
+
+      <div class="box c6">
+        <div class="label">Afraid Of</div>
+        <div class="lines">
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="box c8">
+        <div class="label">Stats</div>
+
+        <div class="statrow">
+          <div>
+            <div class="statname">TRAIL</div>
+            <p class="statdesc">Paths, navigation, movement under pressure.</p>
           </div>
-          <div class="card half">
-            <div class="label">Afraid Of</div>
-            <input type="text" placeholder="A fear the system can exploit" />
-          </div>
+          <div class="scorebox"></div>
         </div>
 
-        <div class="callout">
-          <strong>Echo:</strong> These prompts mirror Lanternlight’s anchors. :contentReference[oaicite:1]{index=1}
-          Here, fear isn’t flavor. It’s leverage.
-        </div>
-      </section>
-
-      <section>
-        <h2>Stats</h2>
-        <p class="desc">Assign <strong>+2, +1, 0, −1</strong> across the four stats (same set as Lanternlight). :contentReference[oaicite:2]{index=2}</p>
-
-        <div class="grid">
-          <div class="card third">
-            <div class="label">Trail</div>
-            <div class="row">
-              <input type="number" min="-3" max="5" placeholder="0" />
-              <span class="small">Paths, navigation, safe travel.</span>
-            </div>
+        <div class="statrow">
+          <div>
+            <div class="statname">CARE</div>
+            <p class="statdesc">Repair, tending, keeping others steady.</p>
           </div>
-
-          <div class="card third">
-            <div class="label">Care</div>
-            <div class="row">
-              <input type="number" min="-3" max="5" placeholder="0" />
-              <span class="small">Repair, tending, keeping others steady.</span>
-            </div>
-          </div>
-
-          <div class="card third">
-            <div class="label">Clever</div>
-            <div class="row">
-              <input type="number" min="-3" max="5" placeholder="0" />
-              <span class="small">Noticing, puzzles, talking.</span>
-            </div>
-          </div>
-
-          <div class="card third">
-            <div class="label">Endure</div>
-            <div class="row">
-              <input type="number" min="-3" max="5" placeholder="0" />
-              <span class="small">Cold, fear, fatigue, grit.</span>
-            </div>
-          </div>
+          <div class="scorebox"></div>
         </div>
 
-        <div class="callout dangerbox">
-          <strong>Roll reminder:</strong> Success (≥ DR). Fractured success (DR−1/2) succeeds but costs. Failure (DR−3+) breaks things.
-        </div>
-      </section>
-
-      <section>
-        <h2>LIGHT</h2>
-        <p class="desc">Mark remaining LIGHT. Start at <strong>6–8</strong>. At <strong>0</strong>, you break (freeze, panic, shutdown, surrender).</p>
-
-        <div class="grid">
-          <div class="card twoThird">
-            <div class="label">LIGHT Track (10 pips)</div>
-            <div class="track" aria-label="Light track">
-              <!-- default checked = you can change if you want 6–8 start -->
-              <label class="pip"><input type="checkbox" checked /> 1</label>
-              <label class="pip"><input type="checkbox" checked /> 2</label>
-              <label class="pip"><input type="checkbox" checked /> 3</label>
-              <label class="pip"><input type="checkbox" checked /> 4</label>
-              <label class="pip"><input type="checkbox" checked /> 5</label>
-              <label class="pip"><input type="checkbox" checked /> 6</label>
-              <label class="pip"><input type="checkbox" /> 7</label>
-              <label class="pip"><input type="checkbox" /> 8</label>
-              <label class="pip"><input type="checkbox" /> 9</label>
-              <label class="pip"><input type="checkbox" /> 10</label>
-            </div>
-            <p class="small" style="margin-top:10px;">
-              Tip: checked = remaining. Uncheck as you lose LIGHT.
-            </p>
+        <div class="statrow">
+          <div>
+            <div class="statname">CLEVER</div>
+            <p class="statdesc">Noticing, problem-solving, talking your way through.</p>
           </div>
-
-          <div class="card third">
-            <div class="label">Helping</div>
-            <p class="desc"><strong>Helping costs 1 LIGHT</strong> to assist another player.</p>
-            <hr />
-            <div class="label">0 LIGHT means</div>
-            <p class="desc">You’re still here. But not reliable. The GM can pressure your choices.</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>TURN (0 → 6)</h2>
-        <p class="desc">The Evening Turn is escalation made visible. Mark current TURN. At <strong>6</strong>, the Turn completes.</p>
-
-        <div class="grid">
-          <div class="card half">
-            <div class="label">TURN Track</div>
-            <div class="track" aria-label="Turn track">
-              <label class="pip"><input type="radio" name="turn" checked /> 0</label>
-              <label class="pip"><input type="radio" name="turn" /> 1</label>
-              <label class="pip"><input type="radio" name="turn" /> 2</label>
-              <label class="pip"><input type="radio" name="turn" /> 3</label>
-              <label class="pip"><input type="radio" name="turn" /> 4</label>
-              <label class="pip"><input type="radio" name="turn" /> 5</label>
-              <label class="pip"><input type="radio" name="turn" /> 6</label>
-            </div>
-          </div>
-
-          <div class="card half">
-            <div class="label">Thresholds</div>
-            <ul class="desc" style="margin:0 0 0 1.1rem;">
-              <li><strong>2:</strong> the world shifts</li>
-              <li><strong>4:</strong> you are not alone</li>
-              <li><strong>6:</strong> the Turn completes</li>
-            </ul>
-            <p class="small" style="margin-top:10px;">
-              Advance TURN on failed rolls, loud action, wasted time, or dragging combat.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>MARKS</h2>
-        <p class="desc">Permanent complications. They don’t clear between scenes.</p>
-
-        <div class="grid">
-          <div class="card half">
-            <div class="label">Marks (list them)</div>
-            <textarea placeholder="Examples: Cracked Visor • Shaking Hands • Static in the Head • Noticed Below…"></textarea>
-          </div>
-          <div class="card half">
-            <div class="label">Mark Triggers / Notes</div>
-            <textarea placeholder="When do they bite? What do they cost? Who/what is attached to them?"></textarea>
-          </div>
+          <div class="scorebox"></div>
         </div>
 
-        <div class="callout">
-          <strong>Lanternlight tie:</strong> Where Lanternlight softened consequences, Marks make them persistent. :contentReference[oaicite:3]{index=3}
+        <div class="statrow">
+          <div>
+            <div class="statname">ENDURE</div>
+            <p class="statdesc">Cold, fear, pain, refusing to stop.</p>
+          </div>
+          <div class="scorebox"></div>
         </div>
-      </section>
 
-      <section>
-        <h2>Notes & Journey Details</h2>
-        <textarea placeholder="Gear, relationships, what you promised, what you left behind, what SNOW-E keeps saying…"></textarea>
+        <p class="note"><strong>Assign:</strong> +2, +1, 0, −1 across the four stats (Lanternlight echo).</p>
+      </div>
 
-        <div class="stamp">
-          <span>FL-01 • Character Sheet</span>
-          <span>THE EVENING TURN IS IN EFFECT</span>
+      <!-- LIGHT / TURN -->
+      <div class="box c4">
+        <div class="label">LIGHT</div>
+        <div class="pips" aria-label="Light track">
+          <!-- 10 pips -->
+          <div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div>
+          <div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div>
         </div>
-      </section>
+        <div class="piplabel">Start at 6–8. Cross off as you lose LIGHT.</div>
+        <div class="note"><strong>At 0:</strong> you break. You remain present, but unreliable.</div>
 
-      <footer>
-        Fractured Light is an echo of Lanternlight’s structure, sharpened into cost and escalation. :contentReference[oaicite:4]{index=4}
-      </footer>
-    </main>
+        <hr style="border:0;height:1px;background:#222;opacity:.35;margin:10px 0;"/>
+
+        <div class="label">TURN (0 → 6)</div>
+        <div class="pips turnpips" aria-label="Turn track">
+          <!-- 7 pips: 0..6 -->
+          <div class="pip" title="0"></div>
+          <div class="pip" title="1"></div>
+          <div class="pip" title="2"></div>
+          <div class="pip" title="3"></div>
+          <div class="pip" title="4"></div>
+          <div class="pip" title="5"></div>
+          <div class="pip" title="6"></div>
+        </div>
+        <div class="thresholds">
+          <div><strong>2:</strong> The world shifts</div>
+          <div><strong>4:</strong> You are not alone</div>
+          <div><strong>6:</strong> The Turn completes</div>
+        </div>
+      </div>
+
+      <!-- Marks -->
+      <div class="box c12">
+        <div class="label">MARKS (Permanent complications)</div>
+        <div class="lines">
+          <div class="line smallline"></div>
+          <div class="line smallline"></div>
+          <div class="line smallline"></div>
+          <div class="line smallline"></div>
+          <div class="line smallline"></div>
+          <div class="line smallline"></div>
+        </div>
+        <p class="note">Marks do not clear between scenes. Use them as leverage and story hooks.</p>
+      </div>
+
+      <!-- Notes -->
+      <div class="box c12">
+        <div class="label">Notes / Gear / Promises / What SNOW-E keeps saying</div>
+        <div class="bigarea"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>Fractured Light • Character Sheet</span>
+      <span>THE EVENING TURN IS IN EFFECT</span>
+    </div>
   </div>
 </body>
 </html>
