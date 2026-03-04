@@ -234,18 +234,24 @@
     }
 
     .circle{
-      width: 30px;
-      height: 30px;
-      border: 2px solid var(--accent);
-      border-radius: 999px;
-      background:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight: 800;
-      font-size: 12px;
-      color: var(--ink);
-    }
+  width:30px;
+  height:30px;
+  min-width:30px;
+  min-height:30px;
+  flex:0 0 30px;
+
+  border:2px solid var(--accent);
+  border-radius:50%;
+  background:#fff;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-weight:800;
+  font-size:12px;
+  color:var(--ink);
+}
 
     .hint{
       font-size: 10px;
