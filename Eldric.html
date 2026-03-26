@@ -8,60 +8,17 @@
 <style>
     body {
         margin: 0;
-        font-family: 'Georgia', serif;
+        font-family: Georgia, serif;
         color: #d6d6d6;
         overflow-x: hidden;
-
         background:
-            linear-gradient(rgba(14,15,13,0.92), rgba(14,15,13,0.96)),
+            linear-gradient(rgba(14, 15, 13, 0.92), rgba(14, 15, 13, 0.96)),
             url("corruption-bg.png");
-
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
     }
 
-    .container {
-        max-width: 900px;
-        margin: auto;
-        padding: 40px 20px;
-        position: relative;
-        z-index: 2;
-    }
-
-    .title {
-        font-size: 48px;
-        letter-spacing: 3px;
-        text-align: center;
-        margin-bottom: 20px;
-        color: #9fbf8f;
-    }
-
-    .image-container {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    .image-container img {
-        width: 100%;
-        max-width: 500px;
-        filter: grayscale(40%) contrast(110%) brightness(85%);
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .story {
-        line-height: 1.8;
-        font-size: 18px;
-        white-space: pre-line;
-    }
-
-    .divider {
-        margin: 40px 0;
-        height: 1px;
-        background: linear-gradient(to right, transparent, #6b8f5a, transparent);
-    }
-
-    /* ROOT / VEIN LAYER */
     .roots-layer {
         position: fixed;
         inset: 0;
@@ -103,7 +60,6 @@
     .root5 { left: 82%; top: -4%; height: 70%; --angle: -12deg; transform: rotate(var(--angle)); animation-delay: 3s; }
     .root6 { left: 92%; top: -15%; height: 100%; --angle: 20deg; transform: rotate(var(--angle)); animation-delay: 5s; }
 
-    /* Branches */
     .root1::before { height: 45%; top: 22%; transform: rotate(28deg); }
     .root1::after  { height: 35%; top: 50%; transform: rotate(-24deg); }
 
@@ -123,31 +79,132 @@
     .root6::after  { height: 34%; top: 48%; transform: rotate(22deg); }
 
     @keyframes rootGrow {
-        0% { opacity: 0.12; transform: scaleY(0.94) scaleX(1) rotate(var(--angle)); }
-        50% { opacity: 0.28; }
-        100% { opacity: 0.42; transform: scaleY(1.03) scaleX(1.08) rotate(var(--angle)); }
+        0% {
+            opacity: 0.12;
+            transform: scaleY(0.94) scaleX(1) rotate(var(--angle));
+        }
+        50% {
+            opacity: 0.28;
+        }
+        100% {
+            opacity: 0.42;
+            transform: scaleY(1.03) scaleX(1.08) rotate(var(--angle));
+        }
     }
 
-    /* SPORES */
     .spore {
         position: fixed;
         width: 6px;
         height: 6px;
         background: rgba(140, 180, 120, 0.15);
         border-radius: 50%;
-        animation: drift 20s linear infinite;
+        animation: drift linear infinite;
+        pointer-events: none;
+        z-index: 1;
     }
 
     @keyframes drift {
-        from { transform: translateY(100vh); }
-        to { transform: translateY(-10vh); }
+        from {
+            transform: translateY(100vh);
+        }
+        to {
+            transform: translateY(-10vh);
+        }
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 50px 24px 70px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .title {
+        text-align: center;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        letter-spacing: 4px;
+        color: #a7c291;
+        margin-bottom: 28px;
+        text-shadow: 0 0 14px rgba(90, 120, 70, 0.25);
+    }
+
+    .image-container {
+        text-align: center;
+        margin-bottom: 36px;
+    }
+
+    .image-container img {
+        width: 100%;
+        max-width: 500px;
+        display: inline-block;
+        border: 1px solid rgba(167, 194, 145, 0.18);
+        box-shadow:
+            0 0 30px rgba(0, 0, 0, 0.45),
+            0 0 12px rgba(90, 120, 70, 0.12);
+        filter: grayscale(35%) contrast(110%) brightness(82%);
+    }
+
+    .story-box {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 32px 34px;
+        background: rgba(10, 12, 10, 0.72);
+        border: 1px solid rgba(125, 155, 105, 0.25);
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+            0 0 30px rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(2px);
+        position: relative;
+    }
+
+    .story-box::before {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border: 1px solid rgba(125, 155, 105, 0.08);
+        pointer-events: none;
+    }
+
+    .story {
+        font-size: 1.08rem;
+        line-height: 1.9;
+        color: #d7d9d2;
+    }
+
+    .story p {
+        margin: 0 0 1.4em;
+    }
+
+    .story p:last-child {
+        margin-bottom: 0;
+    }
+
+    .divider {
+        max-width: 700px;
+        margin: 44px auto 0;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(125, 155, 105, 0.7), transparent);
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 36px 16px 50px;
+        }
+
+        .story-box {
+            padding: 24px 20px;
+        }
+
+        .story {
+            font-size: 1rem;
+            line-height: 1.8;
+        }
     }
 </style>
 </head>
-
 <body>
 
-<!-- ROOTS -->
 <div class="roots-layer">
     <span class="root root1"></span>
     <span class="root root2"></span>
@@ -164,92 +221,44 @@
         <img src="Eldric_Fenblight.png" alt="Eldric Fenblight">
     </div>
 
-    <div class="story">
-Eldric Fenblight was an agent of the Inquisition, sent to purge what they called blight—strange growths, unnatural changes, entire villages that didn’t fit their idea of order.
+    <div class="story-box">
+        <div class="story">
+            <p>Eldric Fenblight was an agent of the Inquisition, sent to purge what they called blight—strange growths, unnatural changes, entire villages that didn’t fit their idea of order. He was good at it. Efficient. Unquestioning. If a place was marked, Eldric burned it out. No hesitation.</p>
 
-He was good at it. Efficient. Unquestioning.
+            <p>Until one mission… felt wrong.</p>
 
-If a place was marked, Eldric burned it out. No hesitation.
+            <p>The land wasn’t dying. It was changing. What the Inquisition called rot… wasn’t corruption. It was the world correcting itself—rebalancing after something deeper had broken.</p>
 
-Until one mission… felt wrong.
+            <p>For the first time, Eldric didn’t act. And in that moment, everything cracked.</p>
 
-The land wasn’t dying.
+            <p>He saw it clearly: The Inquisition didn’t destroy evil. They destroyed anything they didn’t understand.</p>
 
-It was changing.
+            <p>So Eldric walked away. No orders. No explanation. Just gone.</p>
 
-What the Inquisition called rot… wasn’t corruption. It was the world correcting itself—rebalancing after something deeper had broken.
+            <p>They hunted him for it. He didn’t make it far. They found him. Former allies. Former brothers. He didn’t fight them all. And when it was over… Eldric Fenblight was dead.</p>
 
-For the first time, Eldric didn’t act.
+            <p>But something didn’t let that be the end. The land. The rot. The balance he had finally understood. It brought him back. Not as he was. As something… meant to finish the work properly.</p>
 
-And in that moment, everything cracked.
+            <p>Eldric walks the world as an Oath of Pestilence Paladin, but not for the Inquisition, and not for any god.</p>
 
-He saw it clearly:
+            <p>He destroys what is truly corrupted.</p>
+            <p>He protects what is naturally changing.</p>
+            <p>He no longer mistakes growth for disease.</p>
 
-The Inquisition didn’t destroy evil.
-
-They destroyed anything they didn’t understand.
-
-So Eldric walked away.
-
-No orders. No explanation. Just gone.
-
-They hunted him for it.
-
-He didn’t make it far.
-
-They found him.
-
-Former allies. Former brothers.
-
-He didn’t fight them all.
-
-And when it was over… Eldric Fenblight was dead.
-
-But something didn’t let that be the end.
-
-The land.
-
-The rot.
-
-The balance he had finally understood.
-
-It brought him back.
-
-Not as he was.
-
-As something… meant to finish the work properly.
-
-Eldric walks the world as an Oath of Pestilence Paladin, but not for the Inquisition, and not for any god.
-
-He destroys what is truly corrupted
-
-He protects what is naturally changing
-
-He no longer mistakes growth for disease
-
-The Inquisition calls him a traitor.
-
-The innocent don’t know what to call him.
-
-And Eldric…
-
-Doesn’t care what he’s called.
-
-Only that this time—
-
-He gets it right.
+            <p>The Inquisition calls him a traitor. The innocent don’t know what to call him. And Eldric… Doesn’t care what he’s called. Only that this time—He gets it right.</p>
+        </div>
     </div>
 
     <div class="divider"></div>
 </div>
 
 <script>
-    // spores
     for (let i = 0; i < 40; i++) {
-        let spore = document.createElement('div');
+        const spore = document.createElement('div');
         spore.className = 'spore';
         spore.style.left = Math.random() * 100 + 'vw';
         spore.style.animationDuration = (15 + Math.random() * 20) + 's';
+        spore.style.animationDelay = (Math.random() * 10) + 's';
         document.body.appendChild(spore);
     }
 </script>
