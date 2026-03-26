@@ -1,1 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Umashi</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #0b0908;
+      --panel: rgba(10, 8, 8, 0.78);
+      --panel-border: rgba(143, 54, 32, 0.65);
+      --text: #e8dccd;
+      --muted: #c7b39a;
+      --accent: #d68a54;
+      --blood: #7e241d;
+      --shadow: rgba(0, 0, 0, 0.68);
+      --mist: rgba(230, 210, 190, 0.035);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(186, 110, 49, 0.13), transparent 40%),
+        linear-gradient(to bottom, #1b120d 0%, #0e0a08 38%, #080706 100%);
+      color: var(--text);
+      font-family: 'EB Garamond', serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(255, 170, 94, 0.07), rgba(0, 0, 0, 0.72)),
+        radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.45) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255,255,255,0.015) 0,
+          rgba(255,255,255,0.015) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+      opacity: 0.08;
+      pointer-events: none;
+      z-index: 0;
+      mix-blend-mode: soft-light;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 50px 20px 90px;
+      text-align: center;
+    }
+
+    .title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin: 0;
+      color: #f0dfcf;
+      text-shadow:
+        0 0 10px rgba(214, 138, 84, 0.18),
+        0 0 28px rgba(126, 36, 29, 0.14),
+        0 3px 10px rgba(0, 0, 0, 0.75);
+      animation: titleGlow 5.5s ease-in-out infinite;
+    }
+
+    .subtitle {
+      margin: 14px auto 36px;
+      font-size: clamp(1.15rem, 2.5vw, 1.55rem);
+      color: var(--muted);
+      font-style: italic;
+      letter-spacing: 0.04em;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      max-width: 700px;
+    }
+
+    .portrait-wrap {
+      position: relative;
+      width: min(100%, 520px);
+      margin: 0 auto 38px;
+      padding: 12px;
+    }
+
+    .portrait-wrap::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 50% 10%, rgba(214, 138, 84, 0.12), transparent 50%),
+        linear-gradient(to bottom, rgba(126, 36, 29, 0.2), rgba(0, 0, 0, 0.15));
+      filter: blur(18px);
+      z-index: -1;
+    }
+
+    .portrait-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(214, 138, 84, 0.2);
+      border-radius: 16px;
+      box-shadow:
+        0 0 0 1px rgba(126, 36, 29, 0.18) inset,
+        0 20px 50px rgba(0,0,0,0.5);
+      pointer-events: none;
+    }
+
+    .portrait {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      object-fit: cover;
+      filter:
+        saturate(0.92)
+        contrast(1.03)
+        brightness(0.96);
+    }
+
+    .lore-box {
+      position: relative;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 34px 28px;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      text-align: left;
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.45),
+        0 0 25px rgba(126, 36, 29, 0.08);
+      backdrop-filter: blur(4px);
+      overflow: hidden;
+    }
+
+    .lore-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(214, 138, 84, 0.045), transparent 32%),
+        radial-gradient(circle at 100% 0%, rgba(126, 36, 29, 0.08), transparent 30%);
+      pointer-events: none;
+    }
+
+    .lore-box::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(214, 138, 84, 0.08);
+      border-radius: 10px;
+      pointer-events: none;
+    }
+
+    .lore-box p {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 1.2em;
+      font-size: 1.28rem;
+      line-height: 1.75;
+      color: #e6dacd;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+    }
+
+    .lore-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .whisper,
+    .peace,
+    .karasu,
+    .blood {
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+      cursor: default;
+      white-space: nowrap;
+    }
+
+    .whisper:hover {
+      color: #f0c8b1;
+      text-shadow: 0 0 10px rgba(180, 120, 120, 0.35);
+    }
+
+    .peace:hover {
+      color: #ffd1a5;
+      text-shadow: 0 0 10px rgba(214, 138, 84, 0.35);
+    }
+
+    .karasu:hover {
+      color: #f0d9c9;
+      text-shadow: 0 0 8px rgba(255,255,255,0.18);
+    }
+
+    .blood:hover {
+      color: #d76b5a;
+      text-shadow: 0 0 10px rgba(126, 36, 29, 0.45);
+    }
+
+    .mist {
+      position: fixed;
+      left: -10%;
+      bottom: 0;
+      width: 120%;
+      height: 220px;
+      background:
+        radial-gradient(circle at 20% 60%, var(--mist), transparent 32%),
+        radial-gradient(circle at 50% 80%, rgba(255, 236, 220, 0.03), transparent 28%),
+        radial-gradient(circle at 80% 70%, rgba(230, 215, 200, 0.028), transparent 30%);
+      filter: blur(18px);
+      opacity: 0.85;
+      pointer-events: none;
+      z-index: 1;
+      animation: driftMist 30s ease-in-out infinite alternate;
+    }
+
+    .birds {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .bird {
+      position: absolute;
+      color: rgba(0, 0, 0, 0.48);
+      font-size: 18px;
+      animation-name: flyAcross;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      filter: blur(0.2px);
+      text-shadow: 0 0 8px rgba(0,0,0,0.25);
+    }
+
+    .bird:nth-child(1) {
+      top: 14%;
+      left: -10%;
+      animation-duration: 26s;
+      animation-delay: -4s;
+      font-size: 18px;
+      opacity: 0.55;
+    }
+
+    .bird:nth-child(2) {
+      top: 22%;
+      left: -12%;
+      animation-duration: 32s;
+      animation-delay: -12s;
+      font-size: 24px;
+      opacity: 0.4;
+    }
+
+    .bird:nth-child(3) {
+      top: 30%;
+      left: -8%;
+      animation-duration: 22s;
+      animation-delay: -8s;
+      font-size: 14px;
+      opacity: 0.45;
+    }
+
+    .bird:nth-child(4) {
+      top: 17%;
+      left: -15%;
+      animation-duration: 35s;
+      animation-delay: -18s;
+      font-size: 16px;
+      opacity: 0.3;
+    }
+
+    .bird:nth-child(5) {
+      top: 36%;
+      left: -14%;
+      animation-duration: 29s;
+      animation-delay: -15s;
+      font-size: 20px;
+      opacity: 0.35;
+    }
+
+    .ashes {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .ash {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(236, 200, 160, 0.18);
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(236, 200, 160, 0.08);
+      animation: driftAsh linear infinite;
+    }
+
+    .ash:nth-child(1)  { left: 8%;  top: -5%; animation-duration: 16s; animation-delay: -2s; }
+    .ash:nth-child(2)  { left: 20%; top: -8%; animation-duration: 20s; animation-delay: -6s; }
+    .ash:nth-child(3)  { left: 32%; top: -7%; animation-duration: 18s; animation-delay: -9s; }
+    .ash:nth-child(4)  { left: 45%; top: -6%; animation-duration: 22s; animation-delay: -12s; }
+    .ash:nth-child(5)  { left: 57%; top: -10%; animation-duration: 19s; animation-delay: -5s; }
+    .ash:nth-child(6)  { left: 67%; top: -7%; animation-duration: 24s; animation-delay: -13s; }
+    .ash:nth-child(7)  { left: 78%; top: -9%; animation-duration: 17s; animation-delay: -7s; }
+    .ash:nth-child(8)  { left: 88%; top: -6%; animation-duration: 23s; animation-delay: -10s; }
+    .ash:nth-child(9)  { left: 14%; top: -10%; animation-duration: 26s; animation-delay: -14s; }
+    .ash:nth-child(10) { left: 72%; top: -5%; animation-duration: 21s; animation-delay: -3s; }
+
+    @keyframes titleGlow {
+      0%, 100% {
+        text-shadow:
+          0 0 10px rgba(214, 138, 84, 0.18),
+          0 0 28px rgba(126, 36, 29, 0.14),
+          0 3px 10px rgba(0, 0, 0, 0.75);
+      }
+      50% {
+        text-shadow:
+          0 0 14px rgba(214, 138, 84, 0.28),
+          0 0 36px rgba(126, 36, 29, 0.2),
+          0 3px 10px rgba(0, 0, 0, 0.75);
+      }
+    }
+
+    @keyframes driftMist {
+      0% {
+        transform: translateX(-2%) translateY(0);
+      }
+      100% {
+        transform: translateX(2%) translateY(-8px);
+      }
+    }
+
+    @keyframes flyAcross {
+      0% {
+        transform: translateX(0) translateY(0) scale(0.9);
+      }
+      50% {
+        transform: translateX(55vw) translateY(-18px) scale(1);
+      }
+      100% {
+        transform: translateX(120vw) translateY(8px) scale(0.92);
+      }
+    }
+
+    @keyframes driftAsh {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh) translateX(28px);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page {
+        padding: 36px 14px 70px;
+      }
+
+      .subtitle {
+        margin-bottom: 24px;
+      }
+
+      .portrait-wrap {
+        width: min(100%, 430px);
+        margin-bottom: 26px;
+      }
+
+      .lore-box {
+        padding: 24px 18px;
+        border-radius: 14px;
+      }
+
+      .lore-box p {
+        font-size: 1.12rem;
+        line-height: 1.7;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="birds" aria-hidden="true">
+    <span class="bird">🕊</span>
+    <span class="bird">🕊</span>
+    <span class="bird">🕊</span>
+    <span class="bird">🕊</span>
+    <span class="bird">🕊</span>
+  </div>
+
+  <div class="ashes" aria-hidden="true">
+    <span class="ash"></span>
+    <span class="ash"></span>
+    <span class="ash"></span>
+    <span class="ash"></span>
+    <span class="ash"></span>
+    <span class="ash"></span>
+    <span class="ash"></span>
+    <span class="ash"></span>
+    <span class="ash"></span>
+    <span class="ash"></span>
+  </div>
+
+  <div class="mist" aria-hidden="true"></div>
+
+  <main class="page">
+    <h1 class="title">Umashi</h1>
+    <p class="subtitle">“Karasu whispers only to me.”</p>
+
+    <div class="portrait-wrap">
+      <img src="Umashi.jpg" alt="Umashi portrait" class="portrait" />
+    </div>
+
+    <section class="lore-box">
+      <p>
+        <span class="peace">Kawanokuni knows peace</span>. It has known peace for nearly three centuries.
+        The people prosper, grow, their voices heard and rejoiced. Peace fills the lungs easy, but it burns the mind of those that build it.
+      </p>
+
+      <p>
+        Amidst the valleys that surround the many rivers cutting through Kawanokuni, watchful eyes gather.
+        All they see, we know. All they understand, we know.
+        The black birds are known to all, but few know they are us.
+        One, five, a dozen or more, they are our reach. Our fingers to uphold <span class="peace">peace</span> with a gentle grasp.
+      </p>
+
+      <p>
+        My brothers and sisters of <span class="karasu">Karasu</span>, we know the burden of <span class="peace">peace</span>.
+        We know the <span class="whisper">whispers</span> that dare to break free from the reverie.
+        Those that want more. Those who find companionship in avarice.
+        Those who find purpose in scheme. Peace is not an easy breath for us.
+      </p>
+
+      <p>
+        We are taught as we grow, to know the black birds as they know the land.
+        To hear the <span class="whisper">whispers</span> that would threaten Kawanokuni.
+        To confirm, for certainty breeds action. Action without certainty leads to chaos.
+        <span class="peace">Peace</span> can not live within chaos.
+        When certainty falls, the whispers end and peace continues unchallenged.
+        So, we listen, we watch, we learn.
+      </p>
+
+      <p>
+        Kawanokuni knows <span class="peace">peace</span>. <span class="karasu">Karasu</span> <span class="whisper">whispers</span>. I listen.
+        With the whispers, pain finds me, a cold spine that pierces my heart.
+        <span class="karasu">Karasu</span> wants more. <span class="karasu">Karasu</span> walks with avarice.
+        <span class="karasu">Karasu</span> meets with avarice.
+        Peace will not be an easy breath for me.
+        Though my black birds know the truth, though the whispers surrounding me lay bare <span class="karasu">Karasu’s</span> impulse to release the grasp of peace,
+        I do not possess the strength to uphold it… but I must.
+      </p>
+
+      <p>
+        The black birds guide me, as they always have.
+        In the night, as <span class="karasu">Karasu</span> sleeps, peace falls again in Kawanokuni.
+        Peace does not come easy for me.
+        Peace comes with <span class="blood">blood</span>. With desperation. With violence.
+        Then, with silence.
+      </p>
+
+      <p>
+        <span class="peace">Kawanokuni knows peace</span>.
+      </p>
+
+      <p>
+        <span class="karasu">Karasu</span> whispers only to me.
+      </p>
+
+      <p>
+        Amidst the valleys that cut between realms, cloyed in mist, watchful eyes wander.
+        All they see, I know. All they understand, I know.
+        <span class="karasu">Karasu</span> is known to few, but I am known to many.
+        The gentle grasp of peace still holds Kawanokuni, my name bathed in <span class="blood">bloodshed</span>.
+      </p>
+
+      <p>
+        <span class="karasu">Karasu</span> continues to teach, and I continue to learn.
+        The whispers that threaten Kawanokuni worm to ears far beyond the valleys and quiet homes.
+        <span class="karasu">Karasu</span> continues to guide, and I continue to uphold peace.
+      </p>
+
+      <p>
+        <span class="whisper">Whispers</span> threaten <span class="karasu">Karasu</span>.
+        Whispers in a dark land, surrounded by mists, led by a voice ancient.
+        She knows <span class="karasu">Karasu</span>, <span class="karasu">Karasu</span> knows her.
+        <span class="karasu">Karasu</span> warns of her control, how she shapes the ways we walk.
+        How she pushes against <span class="karasu">Karasu</span> to uphold that paltry semblance of unity.
+      </p>
+
+      <p>
+        I hear the whispers she utters.
+        <span class="peace">Kawanokuni must know peace</span>.
+        <span class="karasu">Karasu</span> guides me to silence her.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
