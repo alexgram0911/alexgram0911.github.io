@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eldric Fenblight</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Georgia', serif;
+        background: #0e0f0d;
+        color: #d6d6d6;
+        overflow-x: hidden;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        padding: 40px 20px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .title {
+        font-size: 48px;
+        letter-spacing: 3px;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #9fbf8f;
+    }
+
+    .image-container {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .image-container img {
+        width: 100%;
+        max-width: 500px;
+        filter: grayscale(40%) contrast(110%) brightness(85%);
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .story {
+        line-height: 1.8;
+        font-size: 18px;
+        white-space: pre-line;
+    }
+
+    .divider {
+        margin: 40px 0;
+        height: 1px;
+        background: linear-gradient(to right, transparent, #6b8f5a, transparent);
+    }
+
+    /* subtle drifting spores */
+    .spore {
+        position: fixed;
+        width: 6px;
+        height: 6px;
+        background: rgba(140, 180, 120, 0.15);
+        border-radius: 50%;
+        animation: drift 20s linear infinite;
+    }
+
+    @keyframes drift {
+        from { transform: translateY(100vh); }
+        to { transform: translateY(-10vh); }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="title">ELDRIC FENBLIGHT</div>
+
+    <div class="image-container">
+        <img src="Eldric_Fenblight.png" alt="Eldric Fenblight">
+    </div>
+
+    <div class="story">
+Eldric Fenblight was an agent of the Inquisition, sent to purge what they called blight—strange growths, unnatural changes, entire villages that didn’t fit their idea of order.
+
+He was good at it. Efficient. Unquestioning.
+
+If a place was marked, Eldric burned it out. No hesitation.
+
+Until one mission… felt wrong.
+
+The land wasn’t dying.
+
+It was changing.
+
+What the Inquisition called rot… wasn’t corruption. It was the world correcting itself—rebalancing after something deeper had broken.
+
+For the first time, Eldric didn’t act.
+
+And in that moment, everything cracked.
+
+He saw it clearly:
+
+The Inquisition didn’t destroy evil.
+
+They destroyed anything they didn’t understand.
+
+So Eldric walked away.
+
+No orders. No explanation. Just gone.
+
+They hunted him for it.
+
+He didn’t make it far.
+
+They found him.
+
+Former allies. Former brothers.
+
+He didn’t fight them all.
+
+And when it was over… Eldric Fenblight was dead.
+
+But something didn’t let that be the end.
+
+The land.
+
+The rot.
+
+The balance he had finally understood.
+
+It brought him back.
+
+Not as he was.
+
+As something… meant to finish the work properly.
+
+Eldric walks the world as an Oath of Pestilence Paladin, but not for the Inquisition, and not for any god.
+
+He destroys what is truly corrupted
+
+He protects what is naturally changing
+
+He no longer mistakes growth for disease
+
+The Inquisition calls him a traitor.
+
+The innocent don’t know what to call him.
+
+And Eldric…
+
+Doesn’t care what he’s called.
+
+Only that this time—
+
+He gets it right.
+    </div>
+
+    <div class="divider"></div>
+</div>
+
+<script>
+    // spawn spores
+    for (let i = 0; i < 40; i++) {
+        let spore = document.createElement('div');
+        spore.className = 'spore';
+        spore.style.left = Math.random() * 100 + 'vw';
+        spore.style.animationDuration = (15 + Math.random() * 20) + 's';
+        document.body.appendChild(spore);
+    }
+</script>
+
+</body>
+</html>
