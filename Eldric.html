@@ -54,7 +54,74 @@
         background: linear-gradient(to right, transparent, #6b8f5a, transparent);
     }
 
-    /* subtle drifting spores */
+    /* ROOT / VEIN LAYER */
+    .roots-layer {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.28;
+    }
+
+    .root {
+        position: absolute;
+        width: 2px;
+        background: linear-gradient(
+            to bottom,
+            rgba(110, 145, 90, 0),
+            rgba(110, 145, 90, 0.45),
+            rgba(70, 95, 55, 0.15),
+            rgba(110, 145, 90, 0)
+        );
+        filter: blur(0.3px);
+        transform-origin: top center;
+        animation: rootGrow 12s ease-in-out infinite alternate;
+    }
+
+    .root::before,
+    .root::after {
+        content: "";
+        position: absolute;
+        width: 2px;
+        background: inherit;
+        opacity: 0.75;
+        transform-origin: top center;
+    }
+
+    .root1 { left: 8%; top: -10%; height: 90%; --angle: -18deg; transform: rotate(var(--angle)); animation-delay: 0s; }
+    .root2 { left: 22%; top: -5%; height: 75%; --angle: 10deg; transform: rotate(var(--angle)); animation-delay: 2s; }
+    .root3 { left: 48%; top: -8%; height: 95%; --angle: -6deg; transform: rotate(var(--angle)); animation-delay: 4s; }
+    .root4 { left: 67%; top: -12%; height: 88%; --angle: 14deg; transform: rotate(var(--angle)); animation-delay: 1s; }
+    .root5 { left: 82%; top: -4%; height: 70%; --angle: -12deg; transform: rotate(var(--angle)); animation-delay: 3s; }
+    .root6 { left: 92%; top: -15%; height: 100%; --angle: 20deg; transform: rotate(var(--angle)); animation-delay: 5s; }
+
+    /* Branches */
+    .root1::before { height: 45%; top: 22%; transform: rotate(28deg); }
+    .root1::after  { height: 35%; top: 50%; transform: rotate(-24deg); }
+
+    .root2::before { height: 30%; top: 30%; transform: rotate(-32deg); }
+    .root2::after  { height: 25%; top: 58%; transform: rotate(18deg); }
+
+    .root3::before { height: 40%; top: 25%; transform: rotate(24deg); }
+    .root3::after  { height: 38%; top: 56%; transform: rotate(-20deg); }
+
+    .root4::before { height: 36%; top: 18%; transform: rotate(-26deg); }
+    .root4::after  { height: 28%; top: 52%; transform: rotate(20deg); }
+
+    .root5::before { height: 26%; top: 24%; transform: rotate(30deg); }
+    .root5::after  { height: 22%; top: 49%; transform: rotate(-18deg); }
+
+    .root6::before { height: 42%; top: 16%; transform: rotate(-30deg); }
+    .root6::after  { height: 34%; top: 48%; transform: rotate(22deg); }
+
+    @keyframes rootGrow {
+        0% { opacity: 0.12; transform: scaleY(0.94) scaleX(1) rotate(var(--angle)); }
+        50% { opacity: 0.28; }
+        100% { opacity: 0.42; transform: scaleY(1.03) scaleX(1.08) rotate(var(--angle)); }
+    }
+
+    /* SPORES */
     .spore {
         position: fixed;
         width: 6px;
@@ -72,6 +139,16 @@
 </head>
 
 <body>
+
+<!-- ROOTS -->
+<div class="roots-layer">
+    <span class="root root1"></span>
+    <span class="root root2"></span>
+    <span class="root root3"></span>
+    <span class="root root4"></span>
+    <span class="root root5"></span>
+    <span class="root root6"></span>
+</div>
 
 <div class="container">
     <div class="title">ELDRIC FENBLIGHT</div>
@@ -160,7 +237,7 @@ He gets it right.
 </div>
 
 <script>
-    // spawn spores
+    // spores
     for (let i = 0; i < 40; i++) {
         let spore = document.createElement('div');
         spore.className = 'spore';
