@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thimble</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Crimson Text', serif;
+      background: radial-gradient(circle at top, #1a1a1a, #050505);
+      color: #e6e6e6;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      color: #ff2a2a;
+      text-align: center;
+      letter-spacing: 3px;
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.6;
+      margin-bottom: 30px;
+    }
+
+    .image-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .image-wrapper img {
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 0 40px rgba(255, 0, 0, 0.2);
+    }
+
+    .story {
+      line-height: 1.8;
+      font-size: 18px;
+      white-space: pre-line;
+      background: rgba(0,0,0,0.5);
+      padding: 25px;
+      border-left: 2px solid #ff2a2a;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    }
+
+    .whisper {
+      position: fixed;
+      pointer-events: none;
+      opacity: 0.03;
+      font-size: 12px;
+      color: #fff;
+      animation: drift 20s linear infinite;
+    }
+
+    @keyframes drift {
+      0% { transform: translateY(100vh); }
+      100% { transform: translateY(-100vh); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>THIMBLE</h1>
+  <div class="subtitle">the scratching never stops</div>
+
+  <div class="image-wrapper">
+    <img src="thimble.png" alt="Thimble" />
+  </div>
+
+  <div class="story">
+They say the child who wore Thimble’s name died quietly, long before the Mists came. But, something still answered when her family called.
+
+The thing that returned wore her face, learned her voice, and filled the empty spaces with a careful, practiced warmth. The rats knew first, they gathered at her cradle, whispering, listening, and waiting. They still follow her, still listen, especially when the scratching starts.
+
+She did not stay in that house long.
+
+The spaces between walls and streets suited her better. Sewers that breathed warm, damp air, alleys where trash gathered and no one looked twice. The rats showed her where to go, and she followed without ever questioning why. They brought her food, small trinkets, things others had lost or thrown away.
+
+Sometimes they brought her coins, each marked with the same shallow etching, a winged shape with no head, worn smooth by many hands. She kept them without knowing why. Once, she returned to a place she had slept before and found a mark carved into the stone beside her, the same shape but cut deeper, more purposeful.
+
+After that, the rats began to lead her along quieter paths, where doors were left unlatched, windows already open, rooms emptied just before she arrived. She never saw who moved through those places before her.
+
+She learned the city through them, not as people do, but in paths and pulses. Where the ground felt thin and where the darkness lingered. Where something unseen might press close, just for a moment, before slipping away.
+Years later, when the Mistways began to collapse, the rats grew restless and led Thimble into one that was already dying. She does not remember leaving it. Only the moment something vast and unseen pressed against her… and chose her.
+
+When she woke, there was a hollow in her chest. Not a wound, just seemingly empty space. As if something had tried to take her out of this world and failed, or made room for something else.
+
+Now the Mists feel familiar. The rats grow restless near certain places, circling as if they recognize something she cannot see. At night, something inside her maps the world from beneath her ribs, like it’s figuring out how to escape.
+
+Sometimes, when she is very still, the scratching stops… and something inside her listens instead.
+  </div>
+</div>
+
+<script>
+  const whispers = ["listen", "scratch", "they know", "not empty", "still here"];
+
+  function createWhisper() {
+    const el = document.createElement('div');
+    el.className = 'whisper';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.animationDuration = (10 + Math.random() * 20) + 's';
+    el.innerText = whispers[Math.floor(Math.random() * whispers.length)];
+    document.body.appendChild(el);
+
+    setTimeout(() => el.remove(), 30000);
+  }
+
+  setInterval(createWhisper, 2000);
+</script>
+
+</body>
+</html>
