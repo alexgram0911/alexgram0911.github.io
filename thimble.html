@@ -18,6 +18,8 @@
       max-width: 900px;
       margin: auto;
       padding: 40px 20px;
+      position: relative;
+      z-index: 2;
     }
 
     h1 {
@@ -40,12 +42,28 @@
       display: flex;
       justify-content: center;
       margin-bottom: 40px;
+      position: relative;
     }
 
     .image-wrapper img {
       max-width: 100%;
       border-radius: 12px;
-      box-shadow: 0 0 40px rgba(255, 0, 0, 0.2);
+      filter: grayscale(40%) brightness(0.9);
+      box-shadow: 0 0 60px rgba(255, 0, 0, 0.15);
+      animation: flicker 6s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.95; }
+      100% { opacity: 1; }
+    }
+
+    .image-wrapper::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.6));
+      pointer-events: none;
     }
 
     .story {
@@ -56,6 +74,60 @@
       padding: 25px;
       border-left: 2px solid #ff2a2a;
       box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    }
+
+    /* Crack overlay */
+    .cracks {
+      position: fixed;
+      inset: 0;
+      background: url('cracks.png');
+      opacity: 0.08;
+      pointer-events: none;
+      animation: driftCracks 60s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes driftCracks {
+      0% { transform: translate(0,0); }
+      50% { transform: translate(-20px, 10px); }
+      100% { transform: translate(0,0); }
+    }
+
+    /* Skitter elements */
+    .skitter {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      animation: skitterMove linear;
+    }
+
+    @keyframes skitterMove {
+      from { transform: translate(0,0); }
+      to { transform: translate(var(--x), var(--y)); }
+    }
+
+    /* Hollow distortion */
+    .hollow {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 300px;
+      height: 300px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(255,255,255,0.03), transparent 70%);
+      animation: pulse 8s infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes pulse {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.2; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.3; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 0.2; }
     }
 
     .whisper {
@@ -74,6 +146,9 @@
   </style>
 </head>
 <body>
+
+<div class="cracks"></div>
+<div class="hollow"></div>
 
 <div class="container">
   <h1>THIMBLE</h1>
@@ -117,11 +192,35 @@ Sometimes, when she is very still, the scratching stops… and something inside 
     el.style.animationDuration = (10 + Math.random() * 20) + 's';
     el.innerText = whispers[Math.floor(Math.random() * whispers.length)];
     document.body.appendChild(el);
-
     setTimeout(() => el.remove(), 30000);
   }
 
-  setInterval(createWhisper, 2000);
+  setInterval(createWhisper, 3000);
+
+  function createSkitter() {
+    const el = document.createElement('div');
+    el.className = 'skitter';
+
+    const startX = Math.random() * window.innerWidth;
+    const startY = Math.random() * window.innerHeight;
+    const endX = (Math.random() - 0.5) * 300;
+    const endY = (Math.random() - 0.5) * 300;
+
+    el.style.left = startX + 'px';
+    el.style.top = startY + 'px';
+    el.style.setProperty('--x', endX + 'px');
+    el.style.setProperty('--y', endY + 'px');
+
+    const duration = 0.3 + Math.random() * 0.7;
+    el.style.animationDuration = duration + 's';
+
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), duration * 1000);
+  }
+
+  setInterval(() => {
+    if (Math.random() < 0.3) createSkitter();
+  }, 800);
 </script>
 
 </body>
