@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Hollowed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --bg2: #121215;
+      --panel: rgba(18, 18, 20, 0.82);
+      --panel-strong: rgba(14, 14, 16, 0.92);
+      --text: #ddd6c8;
+      --muted: #a69d8e;
+      --line: rgba(202, 183, 143, 0.18);
+      --gold: #a98d59;
+      --gold-soft: rgba(169, 141, 89, 0.24);
+      --thimble: #8e819c;
+      --eldric: #7d8d5b;
+      --umashi: #b77a4b;
+      --unknown: #7d8189;
+      --shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(180, 180, 180, 0.05), transparent 35%),
+        linear-gradient(to bottom, #0b0b0d 0%, #101014 45%, #0b0b0d 100%);
+      color: var(--text);
+      font-family: 'EB Garamond', serif;
+      overflow-x: hidden;
+    }
+
+    body {
+      position: relative;
+    }
+
+    .mist,
+    .mist::before,
+    .mist::after {
+      position: fixed;
+      inset: -10%;
+      pointer-events: none;
+      z-index: 0;
+      content: "";
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(255,255,255,0.035), transparent 40%),
+        radial-gradient(ellipse at 80% 40%, rgba(255,255,255,0.03), transparent 38%),
+        radial-gradient(ellipse at 50% 70%, rgba(255,255,255,0.025), transparent 42%);
+      filter: blur(36px);
+      animation: drift 26s ease-in-out infinite alternate;
+    }
+
+    .mist::before {
+      animation-duration: 35s;
+      opacity: 0.7;
+      transform: translateY(20px) scale(1.08);
+    }
+
+    .mist::after {
+      animation-duration: 42s;
+      opacity: 0.5;
+      transform: translateX(-20px) scale(1.12);
+    }
+
+    @keyframes drift {
+      0%   { transform: translate3d(-1%, 0, 0) scale(1); }
+      50%  { transform: translate3d(2%, 1.5%, 0) scale(1.04); }
+      100% { transform: translate3d(-2%, -1%, 0) scale(1.08); }
+    }
+
+    .ash {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ash span {
+      position: absolute;
+      display: block;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: rgba(220, 210, 190, 0.2);
+      box-shadow: 0 0 8px rgba(220, 210, 190, 0.12);
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      from {
+        transform: translateY(-10vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      to {
+        transform: translateY(110vh) translateX(30px);
+        opacity: 0;
+      }
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      width: min(1200px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 70px;
+    }
+
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 56px 24px 40px;
+      margin-bottom: 32px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,0.015), rgba(255,255,255,0)),
+        var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(185, 158, 103, 0.45), transparent);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .hero::before {
+      top: 18px;
+    }
+
+    .hero::after {
+      bottom: 18px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      line-height: 1.05;
+      font-weight: 700;
+      color: #efe5d0;
+      text-shadow: 0 0 18px rgba(255, 226, 170, 0.06);
+    }
+
+    .subtitle {
+      width: min(780px, 100%);
+      margin: 18px auto 0;
+      font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+      line-height: 1.65;
+      color: #c8bfae;
+    }
+
+    .quote {
+      width: min(760px, 100%);
+      margin: 24px auto 0;
+      padding-top: 18px;
+      border-top: 1px solid rgba(202, 183, 143, 0.16);
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      color: #a99f90;
+      font-style: italic;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+    }
+
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 540px;
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(202, 183, 143, 0.34);
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.55);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(0,0,0,0.72), rgba(0,0,0,0.08) 40%, rgba(0,0,0,0.3)),
+        linear-gradient(to bottom right, transparent 40%, rgba(255,255,255,0.025));
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .card-glow {
+      position: absolute;
+      inset: auto -15% -25% -15%;
+      height: 220px;
+      filter: blur(50px);
+      opacity: 0.22;
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .card:hover .card-glow {
+      opacity: 0.34;
+    }
+
+    .card-image {
+      position: relative;
+      height: 290px;
+      overflow: hidden;
+      background: #111;
+    }
+
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.85) brightness(0.8) contrast(1.04);
+      transform: scale(1.02);
+      transition: transform 0.45s ease, filter 0.45s ease;
+    }
+
+    .card:hover .card-image img {
+      transform: scale(1.06);
+      filter: saturate(0.95) brightness(0.9) contrast(1.07);
+    }
+
+    .card-body {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: 24px 24px 26px;
+    }
+
+    .card-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-family: 'Cinzel', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      line-height: 1.1;
+      color: #efe2c8;
+    }
+
+    .card h3 {
+      margin: 0 0 16px;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #bca98a;
+      letter-spacing: 0.03em;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 1.08rem;
+      line-height: 1.6;
+      color: #cfc5b4;
+    }
+
+    .card-actions {
+      margin-top: auto;
+      padding-top: 22px;
+    }
+
+    .button {
+      display: inline-block;
+      text-decoration: none;
+      color: #efe5d0;
+      font-size: 0.95rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 12px 18px;
+      border: 1px solid rgba(202, 183, 143, 0.3);
+      background: rgba(255,255,255,0.02);
+      transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .button:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(202, 183, 143, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .card-thimble .card-glow { background: radial-gradient(circle, rgba(142,129,156,0.95), transparent 60%); }
+    .card-eldric .card-glow  { background: radial-gradient(circle, rgba(125,141,91,0.95), transparent 60%); }
+    .card-umashi .card-glow  { background: radial-gradient(circle, rgba(183,122,75,0.95), transparent 60%); }
+    .card-unknown .card-glow { background: radial-gradient(circle, rgba(125,129,137,0.95), transparent 60%); }
+
+    .card-thimble .button:hover { border-color: rgba(142,129,156,0.6); }
+    .card-eldric .button:hover  { border-color: rgba(125,141,91,0.6); }
+    .card-umashi .button:hover  { border-color: rgba(183,122,75,0.6); }
+    .card-unknown .button:hover { border-color: rgba(125,129,137,0.6); }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 36px;
+      padding: 28px 18px 0;
+      border-top: 1px solid rgba(202, 183, 143, 0.12);
+      color: #968d80;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      font-style: italic;
+    }
+
+    @media (max-width: 900px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        min-height: 0;
+      }
+
+      .card-image {
+        height: 260px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-wrap {
+        width: min(100% - 20px, 1200px);
+        padding-top: 24px;
+      }
+
+      .hero {
+        padding: 38px 18px 28px;
+      }
+
+      .card-body {
+        padding: 20px 18px 22px;
+      }
+
+      .card h2 {
+        font-size: 1.7rem;
+      }
+
+      .card p {
+        font-size: 1rem;
+      }
+
+      .button {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mist"></div>
+
+  <div class="ash" aria-hidden="true">
+    <span style="left: 4%; animation-duration: 18s; animation-delay: -3s;"></span>
+    <span style="left: 11%; animation-duration: 24s; animation-delay: -9s;"></span>
+    <span style="left: 18%; animation-duration: 20s; animation-delay: -5s;"></span>
+    <span style="left: 26%; animation-duration: 27s; animation-delay: -11s;"></span>
+    <span style="left: 33%; animation-duration: 19s; animation-delay: -4s;"></span>
+    <span style="left: 40%; animation-duration: 25s; animation-delay: -14s;"></span>
+    <span style="left: 47%; animation-duration: 21s; animation-delay: -7s;"></span>
+    <span style="left: 54%; animation-duration: 29s; animation-delay: -17s;"></span>
+    <span style="left: 61%; animation-duration: 23s; animation-delay: -6s;"></span>
+    <span style="left: 68%; animation-duration: 18s; animation-delay: -8s;"></span>
+    <span style="left: 75%; animation-duration: 30s; animation-delay: -12s;"></span>
+    <span style="left: 82%; animation-duration: 22s; animation-delay: -10s;"></span>
+    <span style="left: 89%; animation-duration: 26s; animation-delay: -15s;"></span>
+    <span style="left: 95%; animation-duration: 20s; animation-delay: -2s;"></span>
+  </div>
+
+  <main class="page-wrap">
+    <section class="hero">
+      <div class="eyebrow">An Archive of the Marked</div>
+      <h1>The Mistwalkers</h1>
+      <p class="subtitle">
+         In the Mists of Radjya, few walk by choice. Fewer still return unchanged.
+          These are the Mistwalkers, bound to paths that shift beneath their feet,
+          carrying burdens the Mists refuse to forget.
+      </p>
+      <div class="quote">
+        “The Mists do not choose the innocent. They choose the reachable.”
+      </div>
+    </section>
+
+    <section class="cards-grid">
+      <article class="card card-thimble">
+        <div class="card-glow"></div>
+        <div class="card-image">
+          <img src="characters/thimble/thimble.png" alt="Thimble">
+        </div>
+        <div class="card-body">
+          <div class="card-label">Mistwalker I</div>
+          <h2>Thimble</h2>
+          <h3>The Hollow Child</h3>
+          <p>
+            She wears a borrowed face with practiced warmth, but something beneath her ribs still scratches at the edges of the world. The rats knew first. They have never stopped listening.
+          </p>
+          <div class="card-actions">
+            <a class="button" href="characters/thimble/">Unseal Record</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card card-eldric">
+        <div class="card-glow"></div>
+        <div class="card-image">
+          <img src="characters/eldric/Eldric_Fenblight.png" alt="Eldric Fenblight">
+        </div>
+        <div class="card-body">
+          <div class="card-label">Mistwalker II</div>
+          <h2>Eldric</h2>
+          <h3>The Rot Beneath the Bark</h3>
+          <p>
+            Corruption did not merely touch him. It rooted, spread, and learned his name. What remains walks still, carrying decay not as a burden, but as a patient companion.
+          </p>
+          <div class="card-actions">
+            <a class="button" href="characters/eldric/">Unseal Record</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card card-umashi">
+        <div class="card-glow"></div>
+        <div class="card-image">
+          <img src="characters/umashi/Umashi.jpg" alt="Umashi">
+        </div>
+        <div class="card-body">
+          <div class="card-label">Mistwalker III</div>
+          <h2>Umashi</h2>
+          <h3>The Lantern in the Quiet Dark</h3>
+          <p>
+            Some lights are kind enough to guide the lost. Others reveal the shape of what was already waiting just beyond the veil. Umashi walks where both truths meet.
+          </p>
+          <div class="card-actions">
+            <a class="button" href="characters/umashi/">Unseal Record</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card card-unknown">
+        <div class="card-glow"></div>
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1518562180175-34a163b1a9a6?auto=format&fit=crop&w=1200&q=80" alt="The Next Marked Soul">
+        </div>
+        <div class="card-body">
+          <div class="card-label">Mistwalker IV</div>
+          <h2>The Next Marked Soul</h2>
+          <h3>Still Forming in the Mist</h3>
+          <p>
+            Not every story arrives with a face. Some are still being shaped in the dark, where breath fogs cold air and the Hollow makes room for one more name.
+          </p>
+          <div class="card-actions">
+            <a class="button" href="characters/next-marked-soul/">Enter the Mist</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <div class="footer-note">
+      Some enter the Mists seeking answers. Others learn too late they were already expected.
+    </div>
+  </main>
+</body>
+</html>
