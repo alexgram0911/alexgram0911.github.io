@@ -412,51 +412,72 @@
         width: 100%;
         text-align: center;
       }
-      .campaign-link {
-  margin-top: 28px;
+.campaign-link {
+  margin-top: 34px;
   text-align: center;
 }
 
-.campaign-link p {
-  margin: 0 0 12px;
-  font-size: 1rem;
-  color: #a99f90;
-  letter-spacing: 0.03em;
-}
-
-.campaign-link a {
+/* Main button */
+.mist-button {
   display: inline-block;
   text-decoration: none;
   font-family: 'Cinzel', serif;
-  font-size: 1rem;
-  letter-spacing: 0.18em;
+  font-size: 1.05rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  padding: 14px 22px;
+  padding: 16px 28px;
   color: #efe5d0;
-  border: 1px solid rgba(202, 183, 143, 0.35);
-  background: rgba(255,255,255,0.02);
-  transition: all 0.3s ease;
+
+  border: 1px solid rgba(202, 183, 143, 0.4);
+  background: rgba(255,255,255,0.03);
+
   position: relative;
   overflow: hidden;
+
+  transition: all 0.35s ease;
+  box-shadow: 0 0 18px rgba(200, 180, 140, 0.08);
 }
 
-.campaign-link a:hover {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(202, 183, 143, 0.6);
-  transform: translateY(-2px);
+/* Hover lift + glow */
+.mist-button:hover {
+  transform: translateY(-3px);
+  border-color: rgba(202, 183, 143, 0.65);
+  box-shadow: 0 0 28px rgba(200, 180, 140, 0.2);
 }
 
-.campaign-link a::after {
+/* Inner glow pulse */
+.mist-button::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, rgba(200, 180, 140, 0.25), transparent 70%);
+  background: radial-gradient(circle, rgba(200,180,140,0.25), transparent 70%);
   opacity: 0;
   transition: opacity 0.4s ease;
 }
 
-.campaign-link a:hover::after {
+.mist-button:hover::before {
   opacity: 1;
+}
+
+/* Subtle mist sweep */
+.mist-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 120%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.12),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.mist-button:hover::after {
+  left: 120%;
 }
     }
   </style>
@@ -492,13 +513,12 @@
       </p>
       <div class="quote">
         “The Mists do not choose the innocent. They choose the reachable.”
-      </div>
+        
       <div class="campaign-link">
-       <p>The archive remembers… but the Mists are still moving.</p>
-        <a href="https://www.dndbeyond.com/campaigns/7606081" target="_blank">
-          Enter the Mists of Radjya
-  </a>
-</div>
+      <a href="https://www.dndbeyond.com/campaigns/7606081" target="_blank" class="mist-button">
+      Enter the Mists of Radjya
+      </a>
+      </div>
     </section>
 
     <section class="cards-grid">
