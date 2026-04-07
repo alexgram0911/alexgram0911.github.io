@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -193,46 +193,70 @@
 
     .campaign-link {
       margin-top: 34px;
-      text-align: center;
     }
-    
+
     .campaign-links {
       display: flex;
       justify-content: center;
-      align-items: center;
-      gap: 16px; /* controls spacing between buttons */
+      align-items: stretch;
+      gap: 14px;
       flex-wrap: wrap;
-      margin-top: 20px;
+      position: relative;
+    }
+
+    .campaign-links::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 42px;
+      height: 42px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(169, 141, 89, 0.16), transparent 70%);
+      filter: blur(10px);
+      opacity: 0.8;
     }
 
     .mist-button {
-      display: inline-block;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 330px;
+      min-height: 58px;
       text-decoration: none;
+      text-align: center;
       font-family: 'Cinzel', serif;
-      font-size: 1.05rem;
-      letter-spacing: 0.22em;
+      font-size: 1rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      padding: 16px 28px;
+      padding: 16px 24px;
       color: #efe5d0;
       border: 1px solid rgba(202, 183, 143, 0.4);
-      background: rgba(255,255,255,0.03);
+      background: linear-gradient(to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
       position: relative;
       overflow: hidden;
-      transition: all 0.35s ease;
-      box-shadow: 0 0 18px rgba(200, 180, 140, 0.08);
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+      box-shadow:
+        0 0 18px rgba(200, 180, 140, 0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.02);
     }
 
     .mist-button:hover {
       transform: translateY(-3px);
-      border-color: rgba(202, 183, 143, 0.65);
-      box-shadow: 0 0 28px rgba(200, 180, 140, 0.2);
+      border-color: rgba(202, 183, 143, 0.68);
+      box-shadow:
+        0 0 30px rgba(200, 180, 140, 0.18),
+        0 0 10px rgba(200, 180, 140, 0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
     }
 
     .mist-button::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle, rgba(200,180,140,0.25), transparent 70%);
+      background: radial-gradient(circle at center, rgba(200,180,140,0.22), transparent 70%);
       opacity: 0;
       transition: opacity 0.4s ease;
     }
@@ -245,7 +269,7 @@
       content: "";
       position: absolute;
       top: 0;
-      left: -120%;
+      left: -130%;
       width: 120%;
       height: 100%;
       background: linear-gradient(
@@ -254,11 +278,30 @@
         rgba(255,255,255,0.12),
         transparent
       );
-      transition: left 0.6s ease;
+      transition: left 0.65s ease;
     }
 
     .mist-button:hover::after {
-      left: 120%;
+      left: 130%;
+    }
+
+    .mist-button-main:hover {
+      box-shadow:
+        0 0 32px rgba(200, 180, 140, 0.20),
+        0 0 14px rgba(200, 180, 140, 0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .mist-button-journal {
+      border-color: rgba(142, 129, 156, 0.32);
+    }
+
+    .mist-button-journal:hover {
+      border-color: rgba(142, 129, 156, 0.62);
+      box-shadow:
+        0 0 32px rgba(142, 129, 156, 0.18),
+        0 0 14px rgba(142, 129, 156, 0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
     }
 
     .cards-grid {
@@ -477,8 +520,17 @@
         text-align: center;
       }
 
+      .campaign-links {
+        gap: 12px;
+      }
+
+      .campaign-links::before {
+        display: none;
+      }
+
       .mist-button {
         width: 100%;
+        min-width: 0;
         max-width: 100%;
         text-align: center;
         padding: 16px 18px;
@@ -521,7 +573,7 @@
         “The Mists do not choose the innocent. They choose those within reach.”
       </div>
 
-      <div class="campaign-link">
+      <div class="campaign-link campaign-links">
         <a href="https://www.dndbeyond.com/campaigns/7606081" target="_blank" class="mist-button">
           Enter the Mists of Radjya
         </a>
