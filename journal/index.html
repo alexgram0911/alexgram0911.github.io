@@ -554,15 +554,11 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    /*
-      1. Replace these two values with your real Supabase values.
-      2. Keep the quotes.
-    */
-    const SUPABASE_URL = "https://hhonnlwjduygzjjvrkqm.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_ZhWeT66imNvwDfG7g5syPw_SUlKkF-_";
+<script>
+  const SUPABASE_URL = "https://hhonnlwjduygzjjvrkqm.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_ZhWeT66imNvwDfG7g5syPw_SUlKkF-_";
 
-     const globalStatus = document.getElementById("globalStatus");
+  const globalStatus = document.getElementById("globalStatus");
   const entryList = document.getElementById("entryList");
   const addSessionBtn = document.getElementById("addSessionBtn");
   const expandAllBtn = document.getElementById("expandAllBtn");
@@ -589,6 +585,7 @@
     }
 
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log("Supabase client created");
     setStatus("Archive connected.");
   } catch (err) {
     console.error("Supabase init error:", err);
