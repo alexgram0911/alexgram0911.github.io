@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mistwalker Session Journal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --bg2: #121215;
+      --panel: rgba(18, 18, 20, 0.82);
+      --panel-strong: rgba(14, 14, 16, 0.92);
+      --text: #ddd6c8;
+      --muted: #a69d8e;
+      --line: rgba(202, 183, 143, 0.18);
+      --gold: #a98d59;
+      --gold-soft: rgba(169, 141, 89, 0.24);
+      --shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+      --danger: #9f5d5d;
+      --success: #8da175;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(180, 180, 180, 0.05), transparent 35%),
+        linear-gradient(to bottom, #0b0b0d 0%, #101014 45%, #0b0b0d 100%);
+      color: var(--text);
+      font-family: 'EB Garamond', serif;
+      overflow-x: hidden;
+    }
+
+    body {
+      position: relative;
+    }
+
+    .mist,
+    .mist::before,
+    .mist::after {
+      position: fixed;
+      inset: -10%;
+      pointer-events: none;
+      z-index: 0;
+      content: "";
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(255,255,255,0.035), transparent 40%),
+        radial-gradient(ellipse at 80% 40%, rgba(255,255,255,0.03), transparent 38%),
+        radial-gradient(ellipse at 50% 70%, rgba(255,255,255,0.025), transparent 42%);
+      filter: blur(36px);
+      animation: drift 26s ease-in-out infinite alternate;
+    }
+
+    .mist::before {
+      animation-duration: 35s;
+      opacity: 0.7;
+      transform: translateY(20px) scale(1.08);
+    }
+
+    .mist::after {
+      animation-duration: 42s;
+      opacity: 0.5;
+      transform: translateX(-20px) scale(1.12);
+    }
+
+    @keyframes drift {
+      0%   { transform: translate3d(-1%, 0, 0) scale(1); }
+      50%  { transform: translate3d(2%, 1.5%, 0) scale(1.04); }
+      100% { transform: translate3d(-2%, -1%, 0) scale(1.08); }
+    }
+
+    .ash {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ash span {
+      position: absolute;
+      display: block;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: rgba(220, 210, 190, 0.2);
+      box-shadow: 0 0 8px rgba(220, 210, 190, 0.12);
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      from {
+        transform: translateY(-10vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      to {
+        transform: translateY(110vh) translateX(30px);
+        opacity: 0;
+      }
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      width: min(1000px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 70px;
+    }
+
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 56px 24px 40px;
+      margin-bottom: 28px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,0.015), rgba(255,255,255,0)),
+        var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(185, 158, 103, 0.45), transparent);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .hero::before {
+      top: 18px;
+    }
+
+    .hero::after {
+      bottom: 18px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      line-height: 1.05;
+      font-weight: 700;
+      color: #efe5d0;
+      text-shadow: 0 0 18px rgba(255, 226, 170, 0.06);
+    }
+
+    .subtitle {
+      width: min(760px, 100%);
+      margin: 18px auto 0;
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      line-height: 1.65;
+      color: #c8bfae;
+    }
+
+    .top-actions {
+      margin-top: 30px;
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .mist-button,
+    .secondary-button,
+    .small-button {
+      display: inline-block;
+      text-decoration: none;
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 14px 22px;
+      color: #efe5d0;
+      border: 1px solid rgba(202, 183, 143, 0.4);
+      background: rgba(255,255,255,0.03);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.35s ease;
+      box-shadow: 0 0 18px rgba(200, 180, 140, 0.08);
+      cursor: pointer;
+    }
+
+    .mist-button:hover,
+    .secondary-button:hover,
+    .small-button:hover {
+      transform: translateY(-3px);
+      border-color: rgba(202, 183, 143, 0.65);
+      box-shadow: 0 0 28px rgba(200, 180, 140, 0.2);
+    }
+
+    .mist-button::before,
+    .secondary-button::before,
+    .small-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(200,180,140,0.25), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .mist-button:hover::before,
+    .secondary-button:hover::before,
+    .small-button:hover::before {
+      opacity: 1;
+    }
+
+    .mist-button::after,
+    .secondary-button::after,
+    .small-button::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 120%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.12),
+        transparent
+      );
+      transition: left 0.6s ease;
+    }
+
+    .mist-button:hover::after,
+    .secondary-button:hover::after,
+    .small-button:hover::after {
+      left: 120%;
+    }
+
+    .secondary-button {
+      background: rgba(255,255,255,0.015);
+    }
+
+    .small-button {
+      padding: 10px 14px;
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 24px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .status-bar {
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      color: #c8bfae;
+      font-size: 1rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .entry-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    details.entry {
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    details.entry:hover {
+      transform: translateY(-3px);
+      border-color: rgba(202, 183, 143, 0.34);
+    }
+
+    details.entry summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 22px 24px;
+      position: relative;
+    }
+
+    details.entry summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.entry summary::after {
+      content: "+";
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      color: var(--gold);
+    }
+
+    details.entry[open] summary::after {
+      content: "–";
+    }
+
+    .entry-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .entry-title {
+      margin: 0;
+      padding-right: 40px;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+      color: #efe2c8;
+      line-height: 1.15;
+    }
+
+    .entry-preview {
+      margin: 10px 0 0;
+      color: #b9ae9a;
+      font-size: 1rem;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .entry-content {
+      padding: 0 24px 24px;
+      border-top: 1px solid rgba(202, 183, 143, 0.12);
+    }
+
+    .entry-content-inner {
+      padding-top: 18px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 200px;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .entry-label {
+      display: block;
+      margin-bottom: 8px;
+      color: #cdbb97;
+      font-size: 0.88rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .entry-input,
+    .entry-date,
+    .entry-textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid rgba(202, 183, 143, 0.18);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-family: 'EB Garamond', serif;
+      font-size: 1.08rem;
+      line-height: 1.5;
+      outline: none;
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.16);
+    }
+
+    .entry-textarea {
+      min-height: 280px;
+      resize: vertical;
+      line-height: 1.65;
+    }
+
+    .entry-input:focus,
+    .entry-date:focus,
+    .entry-textarea:focus {
+      border-color: rgba(202, 183, 143, 0.42);
+      box-shadow: 0 0 0 1px rgba(202, 183, 143, 0.2), inset 0 0 18px rgba(0,0,0,0.16);
+    }
+
+    .entry-actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .save-status {
+      color: #a99f90;
+      font-size: 0.95rem;
+      font-style: italic;
+    }
+
+    .delete-btn {
+      border-color: rgba(159, 93, 93, 0.45);
+      color: #e5c7c7;
+    }
+
+    .delete-btn:hover {
+      border-color: rgba(159, 93, 93, 0.7);
+      box-shadow: 0 0 28px rgba(159, 93, 93, 0.18);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 32px 18px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      color: #b9ae9a;
+      font-size: 1.08rem;
+      line-height: 1.7;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 36px;
+      padding: 28px 18px 0;
+      border-top: 1px solid rgba(202, 183, 143, 0.12);
+      color: #968d80;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      font-style: italic;
+    }
+
+    @media (max-width: 700px) {
+      .field-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-wrap {
+        width: min(100% - 20px, 1000px);
+        padding-top: 24px;
+      }
+
+      .hero {
+        padding: 38px 18px 28px;
+      }
+
+      .toolbar,
+      .status-bar,
+      details.entry summary,
+      .entry-content {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .top-actions {
+        flex-direction: column;
+      }
+
+      .mist-button,
+      .secondary-button,
+      .small-button {
+        width: 100%;
+        text-align: center;
+      }
+
+      .entry-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mist"></div>
+
+  <div class="ash" aria-hidden="true">
+    <span style="left: 4%; animation-duration: 18s; animation-delay: -3s;"></span>
+    <span style="left: 11%; animation-duration: 24s; animation-delay: -9s;"></span>
+    <span style="left: 18%; animation-duration: 20s; animation-delay: -5s;"></span>
+    <span style="left: 26%; animation-duration: 27s; animation-delay: -11s;"></span>
+    <span style="left: 33%; animation-duration: 19s; animation-delay: -4s;"></span>
+    <span style="left: 40%; animation-duration: 25s; animation-delay: -14s;"></span>
+    <span style="left: 47%; animation-duration: 21s; animation-delay: -7s;"></span>
+    <span style="left: 54%; animation-duration: 29s; animation-delay: -17s;"></span>
+    <span style="left: 61%; animation-duration: 23s; animation-delay: -6s;"></span>
+    <span style="left: 68%; animation-duration: 18s; animation-delay: -8s;"></span>
+    <span style="left: 75%; animation-duration: 30s; animation-delay: -12s;"></span>
+    <span style="left: 82%; animation-duration: 22s; animation-delay: -10s;"></span>
+    <span style="left: 89%; animation-duration: 26s; animation-delay: -15s;"></span>
+    <span style="left: 95%; animation-duration: 20s; animation-delay: -2s;"></span>
+  </div>
+
+  <main class="page-wrap">
+    <section class="hero">
+      <div class="eyebrow">The Mists of Radjya</div>
+      <h1>Session Journal</h1>
+      <p class="subtitle">
+        A living record of roads taken, names spoken, bargains made, and truths that should probably have stayed buried.
+      </p>
+
+      <div class="top-actions">
+        <a href="../index.html" class="secondary-button">Return to the Mistwalkers</a>
+        <button class="mist-button" id="addSessionBtn" type="button">Add New Session</button>
+      </div>
+    </section>
+
+    <section class="status-bar" id="globalStatus">
+      Connecting to the archive...
+    </section>
+
+    <section class="toolbar">
+      <button class="small-button" id="expandAllBtn" type="button">Expand All</button>
+      <button class="small-button" id="collapseAllBtn" type="button">Collapse All</button>
+      <button class="small-button" id="exportBtn" type="button">Export Notes</button>
+    </section>
+
+    <section class="entry-list" id="entryList"></section>
+
+    <div class="footer-note">
+      The Mists forget nothing. Your notes shouldn’t have to, either.
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    /*
+      1. Replace these two values with your real Supabase values.
+      2. Keep the quotes.
+    */
+    const SUPABASE_URL = "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE";
+    const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_ANON_KEY_HERE";
+
+    const globalStatus = document.getElementById("globalStatus");
+    const entryList = document.getElementById("entryList");
+
+    let supabase = null;
+
+    if (
+      SUPABASE_URL.startsWith("PASTE_") ||
+      SUPABASE_ANON_KEY.startsWith("PASTE_")
+    ) {
+      globalStatus.textContent = "Add your Supabase Project URL and anon key in this file to bring the archive online.";
+    } else {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      globalStatus.textContent = "Archive connected.";
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatPrettyDate(dateString) {
+      if (!dateString) return "Undated";
+      const d = new Date(dateString + "T12:00:00");
+      if (Number.isNaN(d.getTime())) return dateString;
+      return d.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    }
+
+    function previewText(text) {
+      if (!text || !text.trim()) {
+        return "No notes written yet. Open this entry and start chronicling the chaos.";
+      }
+      const cleaned = text.trim().replace(/\n+/g, " ");
+      return cleaned.length > 160 ? cleaned.slice(0, 160) + "..." : cleaned;
+    }
+
+    async function loadEntries() {
+      if (!supabase) return [];
+
+      const { data, error } = await supabase
+        .from("session_notes")
+        .select("*")
+        .order("session_date", { ascending: false })
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Load error:", error);
+        globalStatus.textContent = "Could not load notes from Supabase. Check your table name, policies, and keys.";
+        return [];
+      }
+
+      return data || [];
+    }
+
+    async function createEntry() {
+      if (!supabase) return;
+
+      const count = await loadEntries();
+      const nextNumber = count.length + 1;
+      const today = new Date().toISOString().split("T")[0];
+
+      const { error } = await supabase
+        .from("session_notes")
+        .insert([{
+          title: `Session ${nextNumber}`,
+          session_date: today,
+          notes: ""
+        }]);
+
+      if (error) {
+        console.error("Create error:", error);
+        globalStatus.textContent = "Could not create a new session entry.";
+        return;
+      }
+
+      globalStatus.textContent = "New session entry created.";
+      await renderEntries(true);
+    }
+
+    async function saveEntry(id, payload, statusEl = null) {
+      if (!supabase) return;
+
+      const { error } = await supabase
+        .from("session_notes")
+        .update(payload)
+        .eq("id", id);
+
+      if (error) {
+        console.error("Save error:", error);
+        globalStatus.textContent = "Could not save entry.";
+        if (statusEl) statusEl.textContent = "Save failed";
+        return;
+      }
+
+      if (statusEl) statusEl.textContent = "Saved";
+      globalStatus.textContent = "Changes saved to Supabase.";
+    }
+
+    async function deleteEntry(id) {
+      if (!supabase) return;
+
+      const confirmed = window.confirm("Delete this session entry?");
+      if (!confirmed) return;
+
+      const { error } = await supabase
+        .from("session_notes")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        console.error("Delete error:", error);
+        globalStatus.textContent = "Could not delete entry.";
+        return;
+      }
+
+      globalStatus.textContent = "Session entry deleted.";
+      await renderEntries();
+    }
+
+    async function exportNotes() {
+      const entries = await loadEntries();
+      if (!entries.length) {
+        globalStatus.textContent = "Nothing to export yet.";
+        return;
+      }
+
+      const ordered = [...entries].sort((a, b) => {
+        const aDate = new Date(a.session_date || 0);
+        const bDate = new Date(b.session_date || 0);
+        return aDate - bDate;
+      });
+
+      const text = ordered.map(entry => {
+        return `${entry.title || "Untitled Session"} (${formatPrettyDate(entry.session_date)})\n\n${entry.notes || "[No notes]"}\n\n${"-".repeat(60)}\n`;
+      }).join("\n");
+
+      const blob = new Blob([text], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "mistwalker-session-notes.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+
+      globalStatus.textContent = "Notes exported.";
+    }
+
+    function bindEntryEvents() {
+      document.querySelectorAll(".save-btn").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const id = button.dataset.id;
+          const wrapper = button.closest(".entry-content-inner");
+          const title = wrapper.querySelector(".entry-input").value.trim() || "Untitled Session";
+          const sessionDate = wrapper.querySelector(".entry-date").value;
+          const notes = wrapper.querySelector(".entry-textarea").value;
+          const statusEl = wrapper.querySelector(".save-status");
+
+          statusEl.textContent = "Saving...";
+          await saveEntry(id, {
+            title: title,
+            session_date: sessionDate || null,
+            notes: notes
+          }, statusEl);
+
+          const details = wrapper.closest("details");
+          if (details) {
+            const titleEl = details.querySelector(".entry-title");
+            const previewEl = details.querySelector(".entry-preview");
+            const metaDateEl = details.querySelector(".entry-date-display");
+
+            if (titleEl) titleEl.textContent = title;
+            if (previewEl) previewEl.textContent = previewText(notes);
+            if (metaDateEl) metaDateEl.textContent = formatPrettyDate(sessionDate);
+          }
+        });
+      });
+
+      document.querySelectorAll(".entry-textarea").forEach((textarea) => {
+        let timer = null;
+
+        textarea.addEventListener("input", () => {
+          const wrapper = textarea.closest(".entry-content-inner");
+          const id = textarea.dataset.id;
+          const title = wrapper.querySelector(".entry-input").value.trim() || "Untitled Session";
+          const sessionDate = wrapper.querySelector(".entry-date").value;
+          const notes = textarea.value;
+          const statusEl = wrapper.querySelector(".save-status");
+          const details = wrapper.closest("details");
+          const previewEl = details.querySelector(".entry-preview");
+          const titleEl = details.querySelector(".entry-title");
+          const metaDateEl = details.querySelector(".entry-date-display");
+
+          statusEl.textContent = "Typing...";
+          previewEl.textContent = previewText(notes);
+          titleEl.textContent = title;
+          metaDateEl.textContent = formatPrettyDate(sessionDate);
+
+          clearTimeout(timer);
+          timer = setTimeout(async () => {
+            statusEl.textContent = "Saving...";
+            await saveEntry(id, {
+              title: title,
+              session_date: sessionDate || null,
+              notes: notes
+            }, statusEl);
+          }, 700);
+        });
+      });
+
+      document.querySelectorAll(".entry-input, .entry-date").forEach((input) => {
+        input.addEventListener("change", async () => {
+          const wrapper = input.closest(".entry-content-inner");
+          const id = wrapper.querySelector(".entry-textarea").dataset.id;
+          const title = wrapper.querySelector(".entry-input").value.trim() || "Untitled Session";
+          const sessionDate = wrapper.querySelector(".entry-date").value;
+          const notes = wrapper.querySelector(".entry-textarea").value;
+          const statusEl = wrapper.querySelector(".save-status");
+          const details = wrapper.closest("details");
+          const previewEl = details.querySelector(".entry-preview");
+          const titleEl = details.querySelector(".entry-title");
+          const metaDateEl = details.querySelector(".entry-date-display");
+
+          titleEl.textContent = title;
+          previewEl.textContent = previewText(notes);
+          metaDateEl.textContent = formatPrettyDate(sessionDate);
+          statusEl.textContent = "Saving...";
+
+          await saveEntry(id, {
+            title: title,
+            session_date: sessionDate || null,
+            notes: notes
+          }, statusEl);
+        });
+      });
+
+      document.querySelectorAll(".delete-btn").forEach((button) => {
+        button.addEventListener("click", async () => {
+          await deleteEntry(button.dataset.id);
+        });
+      });
+    }
+
+    async function renderEntries(openNewest = false) {
+      const entries = await loadEntries();
+
+      if (!entries.length) {
+        entryList.innerHTML = `
+          <div class="empty-state">
+            No session records yet.<br>
+            Click <strong>Add New Session</strong> to begin your archive.
+          </div>
+        `;
+        return;
+      }
+
+      entryList.innerHTML = entries.map((entry, index) => `
+        <details class="entry" ${openNewest && index === 0 ? "open" : ""}>
+          <summary>
+            <div class="entry-meta">
+              <span class="entry-date-display">${escapeHtml(formatPrettyDate(entry.session_date))}</span>
+              <span>Session Record</span>
+            </div>
+            <h2 class="entry-title">${escapeHtml(entry.title || "Untitled Session")}</h2>
+            <p class="entry-preview">${escapeHtml(previewText(entry.notes))}</p>
+          </summary>
+
+          <div class="entry-content">
+            <div class="entry-content-inner">
+              <div class="field-grid">
+                <div>
+                  <label class="entry-label" for="title-${entry.id}">Session Title</label>
+                  <input
+                    class="entry-input"
+                    id="title-${entry.id}"
+                    type="text"
+                    value="${escapeHtml(entry.title || "")}"
+                    placeholder="Session title"
+                  />
+                </div>
+
+                <div>
+                  <label class="entry-label" for="date-${entry.id}">Session Date</label>
+                  <input
+                    class="entry-date"
+                    id="date-${entry.id}"
+                    type="date"
+                    value="${entry.session_date || ""}"
+                  />
+                </div>
+              </div>
+
+              <label class="entry-label" for="notes-${entry.id}">Session Notes</label>
+              <textarea
+                class="entry-textarea"
+                id="notes-${entry.id}"
+                data-id="${entry.id}"
+                placeholder="Write what happened in the Mists..."
+              >${escapeHtml(entry.notes || "")}</textarea>
+
+              <div class="entry-actions">
+                <button class="small-button save-btn" type="button" data-id="${entry.id}">Save Now</button>
+                <button class="small-button delete-btn" type="button" data-id="${entry.id}">Delete Session</button>
+                <span class="save-status">Saved</span>
+              </div>
+            </div>
+          </div>
+        </details>
+      `).join("");
+
+      bindEntryEvents();
+    }
+
+    document.getElementById("addSessionBtn").addEventListener("click", createEntry);
+    document.getElementById("expandAllBtn").addEventListener("click", () => {
+      document.querySelectorAll(".entry").forEach(entry => entry.open = true);
+    });
+    document.getElementById("collapseAllBtn").addEventListener("click", () => {
+      document.querySelectorAll(".entry").forEach(entry => entry.open = false);
+    });
+    document.getElementById("exportBtn").addEventListener("click", exportNotes);
+
+    renderEntries();
+  </script>
+</body>
+</html>
