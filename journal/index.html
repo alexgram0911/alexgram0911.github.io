@@ -554,6 +554,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const SUPABASE_URL = "https://hhonnlwjduygzjjvrkqm.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_ZhWeT66imNvwDfG7g5syPw_SUlKkF-_";
@@ -565,7 +566,7 @@
   const collapseAllBtn = document.getElementById("collapseAllBtn");
   const exportBtn = document.getElementById("exportBtn");
 
-  let supabase = null;
+  let supabaseClient = null;
 
   function setStatus(message) {
     globalStatus.textContent = message;
@@ -584,8 +585,7 @@
       throw new Error("Supabase URL or publishable key is missing.");
     }
 
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log("Supabase client created");
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     setStatus("Archive connected.");
   } catch (err) {
     console.error("Supabase init error:", err);
@@ -621,9 +621,9 @@
   }
 
   async function loadEntries() {
-    if (!supabase) return [];
+    if (!supabaseClient) return [];
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from("session_notes")
       .select("*")
       .order("session_date", { ascending: false })
@@ -639,7 +639,7 @@
   }
 
   async function createEntry() {
-    if (!supabase) {
+    if (!supabaseClient) {
       setStatus("Supabase is not connected.");
       return;
     }
@@ -648,7 +648,7 @@
     const nextNumber = existing.length + 1;
     const today = new Date().toISOString().split("T")[0];
 
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from("session_notes")
       .insert([{
         title: `Session ${nextNumber}`,
@@ -667,9 +667,9 @@
   }
 
   async function saveEntry(id, payload, statusEl = null) {
-    if (!supabase) return;
+    if (!supabaseClient) return;
 
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from("session_notes")
       .update(payload)
       .eq("id", id);
@@ -686,12 +686,12 @@
   }
 
   async function deleteEntry(id) {
-    if (!supabase) return;
+    if (!supabaseClient) return;
 
     const confirmed = window.confirm("Delete this session entry?");
     if (!confirmed) return;
 
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from("session_notes")
       .delete()
       .eq("id", id);
