@@ -562,335 +562,273 @@
     const SUPABASE_URL = "https://hhonnlwjduygzjjvrkqm.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_ZhWeT66imNvwDfG7g5syPw_SUlKkF-_";
 
-    const globalStatus = document.getElementById("globalStatus");
-    const entryList = document.getElementById("entryList");
+     const globalStatus = document.getElementById("globalStatus");
+  const entryList = document.getElementById("entryList");
+  const addSessionBtn = document.getElementById("addSessionBtn");
+  const expandAllBtn = document.getElementById("expandAllBtn");
+  const collapseAllBtn = document.getElementById("collapseAllBtn");
+  const exportBtn = document.getElementById("exportBtn");
 
-    let supabase = null;
+  let supabase = null;
+
+  function setStatus(message) {
+    globalStatus.textContent = message;
+  }
+
+  try {
+    if (!window.supabase) {
+      throw new Error("Supabase library failed to load.");
+    }
 
     if (
-      SUPABASE_URL.startsWith("PASTE_") ||
-      SUPABASE_ANON_KEY.startsWith("PASTE_")
+      !SUPABASE_URL ||
+      !SUPABASE_ANON_KEY ||
+      SUPABASE_ANON_KEY.includes("PASTE_YOUR")
     ) {
-      globalStatus.textContent = "Add your Supabase Project URL and anon key in this file to bring the archive online.";
-    } else {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      globalStatus.textContent = "Archive connected.";
+      throw new Error("Supabase URL or publishable key is missing.");
     }
 
-    function escapeHtml(str) {
-      return String(str ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    setStatus("Archive connected.");
+  } catch (err) {
+    console.error("Supabase init error:", err);
+    setStatus("Archive failed to connect. Open F12 → Console.");
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function formatPrettyDate(dateString) {
+    if (!dateString) return "Undated";
+    const d = new Date(dateString + "T12:00:00");
+    if (Number.isNaN(d.getTime())) return dateString;
+    return d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+  }
+
+  function previewText(text) {
+    if (!text || !text.trim()) {
+      return "No notes written yet. Open this entry and start chronicling the chaos.";
+    }
+    const cleaned = text.trim().replace(/\n+/g, " ");
+    return cleaned.length > 160 ? cleaned.slice(0, 160) + "..." : cleaned;
+  }
+
+  async function loadEntries() {
+    if (!supabase) return [];
+
+    const { data, error } = await supabase
+      .from("session_notes")
+      .select("*")
+      .order("session_date", { ascending: false })
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Load error:", error);
+      setStatus("Could not load notes. Check table name and RLS policies.");
+      return [];
     }
 
-    function formatPrettyDate(dateString) {
-      if (!dateString) return "Undated";
-      const d = new Date(dateString + "T12:00:00");
-      if (Number.isNaN(d.getTime())) return dateString;
-      return d.toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
+    return data || [];
+  }
+
+  async function createEntry() {
+    if (!supabase) {
+      setStatus("Supabase is not connected.");
+      return;
+    }
+
+    const existing = await loadEntries();
+    const nextNumber = existing.length + 1;
+    const today = new Date().toISOString().split("T")[0];
+
+    const { error } = await supabase
+      .from("session_notes")
+      .insert([{
+        title: `Session ${nextNumber}`,
+        session_date: today,
+        notes: ""
+      }]);
+
+    if (error) {
+      console.error("Create error:", error);
+      setStatus("Could not create a new session entry.");
+      return;
+    }
+
+    setStatus("New session entry created.");
+    await renderEntries(true);
+  }
+
+  async function saveEntry(id, payload, statusEl = null) {
+    if (!supabase) return;
+
+    const { error } = await supabase
+      .from("session_notes")
+      .update(payload)
+      .eq("id", id);
+
+    if (error) {
+      console.error("Save error:", error);
+      if (statusEl) statusEl.textContent = "Save failed";
+      setStatus("Could not save entry.");
+      return;
+    }
+
+    if (statusEl) statusEl.textContent = "Saved";
+    setStatus("Changes saved.");
+  }
+
+  async function deleteEntry(id) {
+    if (!supabase) return;
+
+    const confirmed = window.confirm("Delete this session entry?");
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from("session_notes")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Delete error:", error);
+      setStatus("Could not delete entry.");
+      return;
+    }
+
+    setStatus("Session entry deleted.");
+    await renderEntries();
+  }
+
+  async function exportNotes() {
+    const entries = await loadEntries();
+    if (!entries.length) {
+      setStatus("Nothing to export yet.");
+      return;
+    }
+
+    const ordered = [...entries].sort((a, b) => {
+      const aDate = new Date(a.session_date || 0);
+      const bDate = new Date(b.session_date || 0);
+      return aDate - bDate;
+    });
+
+    const text = ordered.map(entry =>
+      `${entry.title || "Untitled Session"} (${formatPrettyDate(entry.session_date)})\n\n${entry.notes || "[No notes]"}\n\n${"-".repeat(60)}\n`
+    ).join("\n");
+
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "mistwalker-session-notes.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+
+    setStatus("Notes exported.");
+  }
+
+  function bindEntryEvents() {
+    document.querySelectorAll(".save-btn").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const id = button.dataset.id;
+        const wrapper = button.closest(".entry-content-inner");
+        const title = wrapper.querySelector(".entry-input").value.trim() || "Untitled Session";
+        const sessionDate = wrapper.querySelector(".entry-date").value;
+        const notes = wrapper.querySelector(".entry-textarea").value;
+        const statusEl = wrapper.querySelector(".save-status");
+
+        statusEl.textContent = "Saving...";
+        await saveEntry(id, { title, session_date: sessionDate || null, notes }, statusEl);
+
+        const details = wrapper.closest("details");
+        if (details) {
+          details.querySelector(".entry-title").textContent = title;
+          details.querySelector(".entry-preview").textContent = previewText(notes);
+          details.querySelector(".entry-date-display").textContent = formatPrettyDate(sessionDate);
+        }
       });
-    }
+    });
 
-    function previewText(text) {
-      if (!text || !text.trim()) {
-        return "No notes written yet. Open this entry and start chronicling the chaos.";
-      }
-      const cleaned = text.trim().replace(/\n+/g, " ");
-      return cleaned.length > 160 ? cleaned.slice(0, 160) + "..." : cleaned;
-    }
-
-    async function loadEntries() {
-      if (!supabase) return [];
-
-      const { data, error } = await supabase
-        .from("session_notes")
-        .select("*")
-        .order("session_date", { ascending: false })
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Load error:", error);
-        globalStatus.textContent = "Could not load notes from Supabase. Check your table name, policies, and keys.";
-        return [];
-      }
-
-      return data || [];
-    }
-
-    async function createEntry() {
-      if (!supabase) return;
-
-      const count = await loadEntries();
-      const nextNumber = count.length + 1;
-      const today = new Date().toISOString().split("T")[0];
-
-      const { error } = await supabase
-        .from("session_notes")
-        .insert([{
-          title: `Session ${nextNumber}`,
-          session_date: today,
-          notes: ""
-        }]);
-
-      if (error) {
-        console.error("Create error:", error);
-        globalStatus.textContent = "Could not create a new session entry.";
-        return;
-      }
-
-      globalStatus.textContent = "New session entry created.";
-      await renderEntries(true);
-    }
-
-    async function saveEntry(id, payload, statusEl = null) {
-      if (!supabase) return;
-
-      const { error } = await supabase
-        .from("session_notes")
-        .update(payload)
-        .eq("id", id);
-
-      if (error) {
-        console.error("Save error:", error);
-        globalStatus.textContent = "Could not save entry.";
-        if (statusEl) statusEl.textContent = "Save failed";
-        return;
-      }
-
-      if (statusEl) statusEl.textContent = "Saved";
-      globalStatus.textContent = "Changes saved to Supabase.";
-    }
-
-    async function deleteEntry(id) {
-      if (!supabase) return;
-
-      const confirmed = window.confirm("Delete this session entry?");
-      if (!confirmed) return;
-
-      const { error } = await supabase
-        .from("session_notes")
-        .delete()
-        .eq("id", id);
-
-      if (error) {
-        console.error("Delete error:", error);
-        globalStatus.textContent = "Could not delete entry.";
-        return;
-      }
-
-      globalStatus.textContent = "Session entry deleted.";
-      await renderEntries();
-    }
-
-    async function exportNotes() {
-      const entries = await loadEntries();
-      if (!entries.length) {
-        globalStatus.textContent = "Nothing to export yet.";
-        return;
-      }
-
-      const ordered = [...entries].sort((a, b) => {
-        const aDate = new Date(a.session_date || 0);
-        const bDate = new Date(b.session_date || 0);
-        return aDate - bDate;
+    document.querySelectorAll(".delete-btn").forEach((button) => {
+      button.addEventListener("click", async () => {
+        await deleteEntry(button.dataset.id);
       });
+    });
+  }
 
-      const text = ordered.map(entry => {
-        return `${entry.title || "Untitled Session"} (${formatPrettyDate(entry.session_date)})\n\n${entry.notes || "[No notes]"}\n\n${"-".repeat(60)}\n`;
-      }).join("\n");
+  async function renderEntries(openNewest = false) {
+    const entries = await loadEntries();
 
-      const blob = new Blob([text], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "mistwalker-session-notes.txt";
-      a.click();
-      URL.revokeObjectURL(url);
-
-      globalStatus.textContent = "Notes exported.";
+    if (!entries.length) {
+      entryList.innerHTML = `
+        <div class="empty-state">
+          No session records yet.<br>
+          Click <strong>Add New Session</strong> to begin your archive.
+        </div>
+      `;
+      return;
     }
 
-    function bindEntryEvents() {
-      document.querySelectorAll(".save-btn").forEach((button) => {
-        button.addEventListener("click", async () => {
-          const id = button.dataset.id;
-          const wrapper = button.closest(".entry-content-inner");
-          const title = wrapper.querySelector(".entry-input").value.trim() || "Untitled Session";
-          const sessionDate = wrapper.querySelector(".entry-date").value;
-          const notes = wrapper.querySelector(".entry-textarea").value;
-          const statusEl = wrapper.querySelector(".save-status");
-
-          statusEl.textContent = "Saving...";
-          await saveEntry(id, {
-            title: title,
-            session_date: sessionDate || null,
-            notes: notes
-          }, statusEl);
-
-          const details = wrapper.closest("details");
-          if (details) {
-            const titleEl = details.querySelector(".entry-title");
-            const previewEl = details.querySelector(".entry-preview");
-            const metaDateEl = details.querySelector(".entry-date-display");
-
-            if (titleEl) titleEl.textContent = title;
-            if (previewEl) previewEl.textContent = previewText(notes);
-            if (metaDateEl) metaDateEl.textContent = formatPrettyDate(sessionDate);
-          }
-        });
-      });
-
-      document.querySelectorAll(".entry-textarea").forEach((textarea) => {
-        let timer = null;
-
-        textarea.addEventListener("input", () => {
-          const wrapper = textarea.closest(".entry-content-inner");
-          const id = textarea.dataset.id;
-          const title = wrapper.querySelector(".entry-input").value.trim() || "Untitled Session";
-          const sessionDate = wrapper.querySelector(".entry-date").value;
-          const notes = textarea.value;
-          const statusEl = wrapper.querySelector(".save-status");
-          const details = wrapper.closest("details");
-          const previewEl = details.querySelector(".entry-preview");
-          const titleEl = details.querySelector(".entry-title");
-          const metaDateEl = details.querySelector(".entry-date-display");
-
-          statusEl.textContent = "Typing...";
-          previewEl.textContent = previewText(notes);
-          titleEl.textContent = title;
-          metaDateEl.textContent = formatPrettyDate(sessionDate);
-
-          clearTimeout(timer);
-          timer = setTimeout(async () => {
-            statusEl.textContent = "Saving...";
-            await saveEntry(id, {
-              title: title,
-              session_date: sessionDate || null,
-              notes: notes
-            }, statusEl);
-          }, 700);
-        });
-      });
-
-      document.querySelectorAll(".entry-input, .entry-date").forEach((input) => {
-        input.addEventListener("change", async () => {
-          const wrapper = input.closest(".entry-content-inner");
-          const id = wrapper.querySelector(".entry-textarea").dataset.id;
-          const title = wrapper.querySelector(".entry-input").value.trim() || "Untitled Session";
-          const sessionDate = wrapper.querySelector(".entry-date").value;
-          const notes = wrapper.querySelector(".entry-textarea").value;
-          const statusEl = wrapper.querySelector(".save-status");
-          const details = wrapper.closest("details");
-          const previewEl = details.querySelector(".entry-preview");
-          const titleEl = details.querySelector(".entry-title");
-          const metaDateEl = details.querySelector(".entry-date-display");
-
-          titleEl.textContent = title;
-          previewEl.textContent = previewText(notes);
-          metaDateEl.textContent = formatPrettyDate(sessionDate);
-          statusEl.textContent = "Saving...";
-
-          await saveEntry(id, {
-            title: title,
-            session_date: sessionDate || null,
-            notes: notes
-          }, statusEl);
-        });
-      });
-
-      document.querySelectorAll(".delete-btn").forEach((button) => {
-        button.addEventListener("click", async () => {
-          await deleteEntry(button.dataset.id);
-        });
-      });
-    }
-
-    async function renderEntries(openNewest = false) {
-      const entries = await loadEntries();
-
-      if (!entries.length) {
-        entryList.innerHTML = `
-          <div class="empty-state">
-            No session records yet.<br>
-            Click <strong>Add New Session</strong> to begin your archive.
+    entryList.innerHTML = entries.map((entry, index) => `
+      <details class="entry" ${openNewest && index === 0 ? "open" : ""}>
+        <summary>
+          <div class="entry-meta">
+            <span class="entry-date-display">${escapeHtml(formatPrettyDate(entry.session_date))}</span>
+            <span>Session Record</span>
           </div>
-        `;
-        return;
-      }
+          <h2 class="entry-title">${escapeHtml(entry.title || "Untitled Session")}</h2>
+          <p class="entry-preview">${escapeHtml(previewText(entry.notes))}</p>
+        </summary>
 
-      entryList.innerHTML = entries.map((entry, index) => `
-        <details class="entry" ${openNewest && index === 0 ? "open" : ""}>
-          <summary>
-            <div class="entry-meta">
-              <span class="entry-date-display">${escapeHtml(formatPrettyDate(entry.session_date))}</span>
-              <span>Session Record</span>
-            </div>
-            <h2 class="entry-title">${escapeHtml(entry.title || "Untitled Session")}</h2>
-            <p class="entry-preview">${escapeHtml(previewText(entry.notes))}</p>
-          </summary>
-
-          <div class="entry-content">
-            <div class="entry-content-inner">
-              <div class="field-grid">
-                <div>
-                  <label class="entry-label" for="title-${entry.id}">Session Title</label>
-                  <input
-                    class="entry-input"
-                    id="title-${entry.id}"
-                    type="text"
-                    value="${escapeHtml(entry.title || "")}"
-                    placeholder="Session title"
-                  />
-                </div>
-
-                <div>
-                  <label class="entry-label" for="date-${entry.id}">Session Date</label>
-                  <input
-                    class="entry-date"
-                    id="date-${entry.id}"
-                    type="date"
-                    value="${entry.session_date || ""}"
-                  />
-                </div>
+        <div class="entry-content">
+          <div class="entry-content-inner">
+            <div class="field-grid">
+              <div>
+                <label class="entry-label">Session Title</label>
+                <input class="entry-input" type="text" value="${escapeHtml(entry.title || "")}">
               </div>
-
-              <label class="entry-label" for="notes-${entry.id}">Session Notes</label>
-              <textarea
-                class="entry-textarea"
-                id="notes-${entry.id}"
-                data-id="${entry.id}"
-                placeholder="Write what happened in the Mists..."
-              >${escapeHtml(entry.notes || "")}</textarea>
-
-              <div class="entry-actions">
-                <button class="small-button save-btn" type="button" data-id="${entry.id}">Save Now</button>
-                <button class="small-button delete-btn" type="button" data-id="${entry.id}">Delete Session</button>
-                <span class="save-status">Saved</span>
+              <div>
+                <label class="entry-label">Session Date</label>
+                <input class="entry-date" type="date" value="${entry.session_date || ""}">
               </div>
             </div>
+
+            <label class="entry-label">Session Notes</label>
+            <textarea class="entry-textarea">${escapeHtml(entry.notes || "")}</textarea>
+
+            <div class="entry-actions">
+              <button class="small-button save-btn" type="button" data-id="${entry.id}">Save Now</button>
+              <button class="small-button delete-btn" type="button" data-id="${entry.id}">Delete Session</button>
+              <span class="save-status">Saved</span>
+            </div>
           </div>
-        </details>
-      `).join("");
+        </div>
+      </details>
+    `).join("");
 
-      bindEntryEvents();
-    }
+    bindEntryEvents();
+  }
 
-    document.getElementById("addSessionBtn").addEventListener("click", createEntry);
-    document.getElementById("expandAllBtn").addEventListener("click", () => {
-      document.querySelectorAll(".entry").forEach(entry => entry.open = true);
-    });
-    document.getElementById("collapseAllBtn").addEventListener("click", () => {
-      document.querySelectorAll(".entry").forEach(entry => entry.open = false);
-    });
-    document.getElementById("exportBtn").addEventListener("click", exportNotes);
+  addSessionBtn.addEventListener("click", createEntry);
+  expandAllBtn.addEventListener("click", () => {
+    document.querySelectorAll(".entry").forEach(entry => entry.open = true);
+  });
+  collapseAllBtn.addEventListener("click", () => {
+    document.querySelectorAll(".entry").forEach(entry => entry.open = false);
+  });
+  exportBtn.addEventListener("click", exportNotes);
 
-    renderEntries();
-  </script>
+  renderEntries();
+</script>
 </body>
 </html>
