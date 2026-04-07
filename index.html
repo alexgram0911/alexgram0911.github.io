@@ -121,10 +121,13 @@
       padding: 48px 0 70px;
     }
 
+    .content-rail {
+      width: 100%;
+      padding: 0 24px;
+    }
+
     .hero {
       position: relative;
-      text-align: center;
-      padding: 56px 24px 40px;
       margin-bottom: 32px;
       border: 1px solid var(--line);
       background:
@@ -151,6 +154,11 @@
 
     .hero::after {
       bottom: 18px;
+    }
+
+    .hero-inner {
+      text-align: center;
+      padding: 56px 0 40px;
     }
 
     .eyebrow {
@@ -285,13 +293,6 @@
       left: 130%;
     }
 
-    .mist-button-main:hover {
-      box-shadow:
-        0 0 32px rgba(200, 180, 140, 0.20),
-        0 0 14px rgba(200, 180, 140, 0.08),
-        inset 0 0 0 1px rgba(255,255,255,0.04);
-    }
-
     .mist-button-journal {
       border-color: rgba(142, 129, 156, 0.32);
     }
@@ -304,10 +305,16 @@
         inset 0 0 0 1px rgba(255,255,255,0.04);
     }
 
+    .cards-section {
+      margin-top: 0;
+    }
+
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 28px;
+      width: 100%;
+      margin: 0 auto;
     }
 
     .card {
@@ -499,7 +506,11 @@
         padding-top: 24px;
       }
 
-      .hero {
+      .content-rail {
+        padding: 0;
+      }
+
+      .hero-inner {
         padding: 38px 18px 28px;
       }
 
@@ -561,100 +572,108 @@
 
   <main class="page-wrap">
     <section class="hero">
-      <div class="eyebrow">The Mists of Radjya</div>
-      <h1>The Mistwalkers</h1>
-      <p class="subtitle">
-        In the Mists of Radjya, few walk by choice. Fewer still return unchanged.
-        These are the Mistwalkers, bound to paths that shift beneath their feet,
-        carrying burdens the Mists refuse to forget.
-      </p>
+      <div class="content-rail">
+        <div class="hero-inner">
+          <div class="eyebrow">The Mists of Radjya</div>
+          <h1>The Mistwalkers</h1>
+          <p class="subtitle">
+            In the Mists of Radjya, few walk by choice. Fewer still return unchanged.
+            These are the Mistwalkers, bound to paths that shift beneath their feet,
+            carrying burdens the Mists refuse to forget.
+          </p>
 
-      <div class="quote">
-        “The Mists do not choose the innocent. They choose those within reach.”
-      </div>
+          <div class="quote">
+            “The Mists do not choose the innocent. They choose those within reach.”
+          </div>
 
-      <div class="campaign-link campaign-links">
-        <a href="https://www.dndbeyond.com/campaigns/7606081" target="_blank" class="mist-button">
-          Enter the Mists of Radjya
-        </a>
-        <a href="journal/" class="mist-button">
-          Open Session Journal
-        </a>
+          <div class="campaign-link campaign-links">
+            <a href="https://www.dndbeyond.com/campaigns/7606081" target="_blank" class="mist-button mist-button-main">
+              Enter the Mists of Radjya
+            </a>
+            <a href="journal/" class="mist-button mist-button-journal">
+              Open Session Journal
+            </a>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="cards-grid">
-      <article class="card card-thimble">
-        <div class="card-glow"></div>
-        <div class="card-image">
-          <img src="characters/thimble/thimble.png" alt="Thimble">
-        </div>
-        <div class="card-body">
-          <div class="card-label">Mistwalker I</div>
-          <h2>Thimble</h2>
-          <h3>The Hollow Child</h3>
-          <p>
-            She wears a borrowed face with practiced warmth, but something beneath her ribs still scratches at the edges of the world. The rats knew first. They have never stopped listening.
-          </p>
-          <div class="card-actions">
-            <a class="button" href="characters/thimble/">Unseal Record</a>
-          </div>
-        </div>
-      </article>
+    <section class="cards-section">
+      <div class="content-rail">
+        <div class="cards-grid">
+          <article class="card card-thimble">
+            <div class="card-glow"></div>
+            <div class="card-image">
+              <img src="characters/thimble/thimble.png" alt="Thimble">
+            </div>
+            <div class="card-body">
+              <div class="card-label">Mistwalker I</div>
+              <h2>Thimble</h2>
+              <h3>The Hollow Child</h3>
+              <p>
+                She wears a borrowed face with practiced warmth, but something beneath her ribs still scratches at the edges of the world. The rats knew first. They have never stopped listening.
+              </p>
+              <div class="card-actions">
+                <a class="button" href="characters/thimble/">Unseal Record</a>
+              </div>
+            </div>
+          </article>
 
-      <article class="card card-eldric">
-        <div class="card-glow"></div>
-        <div class="card-image">
-          <img src="characters/eldric/Eldric_Fenblight.png" alt="Eldric Fenblight">
-        </div>
-        <div class="card-body">
-          <div class="card-label">Mistwalker II</div>
-          <h2>Eldric</h2>
-          <h3>The Rot Beneath the Bark</h3>
-          <p>
-            Corruption did not merely touch him. It rooted, spread, and learned his name. What remains walks still, carrying decay not as a burden, but as a patient companion.
-          </p>
-          <div class="card-actions">
-            <a class="button" href="characters/eldric/">Unseal Record</a>
-          </div>
-        </div>
-      </article>
+          <article class="card card-eldric">
+            <div class="card-glow"></div>
+            <div class="card-image">
+              <img src="characters/eldric/Eldric_Fenblight.png" alt="Eldric Fenblight">
+            </div>
+            <div class="card-body">
+              <div class="card-label">Mistwalker II</div>
+              <h2>Eldric</h2>
+              <h3>The Rot Beneath the Bark</h3>
+              <p>
+                Corruption did not merely touch him. It rooted, spread, and learned his name. What remains walks still, carrying decay not as a burden, but as a patient companion.
+              </p>
+              <div class="card-actions">
+                <a class="button" href="characters/eldric/">Unseal Record</a>
+              </div>
+            </div>
+          </article>
 
-      <article class="card card-umashi">
-        <div class="card-glow"></div>
-        <div class="card-image">
-          <img src="characters/umashi/Umashi.jpg" alt="Umashi">
-        </div>
-        <div class="card-body">
-          <div class="card-label">Mistwalker III</div>
-          <h2>Umashi</h2>
-          <h3>The Lantern in the Quiet Dark</h3>
-          <p>
-            Some lights are kind enough to guide the lost. Others reveal the shape of what was already waiting just beyond the veil. Umashi walks where both truths meet.
-          </p>
-          <div class="card-actions">
-            <a class="button" href="characters/umashi/">Unseal Record</a>
-          </div>
-        </div>
-      </article>
+          <article class="card card-umashi">
+            <div class="card-glow"></div>
+            <div class="card-image">
+              <img src="characters/umashi/Umashi.jpg" alt="Umashi">
+            </div>
+            <div class="card-body">
+              <div class="card-label">Mistwalker III</div>
+              <h2>Umashi</h2>
+              <h3>The Lantern in the Quiet Dark</h3>
+              <p>
+                Some lights are kind enough to guide the lost. Others reveal the shape of what was already waiting just beyond the veil. Umashi walks where both truths meet.
+              </p>
+              <div class="card-actions">
+                <a class="button" href="characters/umashi/">Unseal Record</a>
+              </div>
+            </div>
+          </article>
 
-      <article class="card card-unknown">
-        <div class="card-glow"></div>
-        <div class="card-image">
-          <img src="https://images.unsplash.com/photo-1518562180175-34a163b1a9a6?auto=format&fit=crop&w=1200&q=80" alt="The Next Marked Soul">
+          <article class="card card-unknown">
+            <div class="card-glow"></div>
+            <div class="card-image">
+              <img src="https://images.unsplash.com/photo-1518562180175-34a163b1a9a6?auto=format&fit=crop&w=1200&q=80" alt="The Next Marked Soul">
+            </div>
+            <div class="card-body">
+              <div class="card-label">Mistwalker IV</div>
+              <h2>The Next MARC-ed Soul</h2>
+              <h3>Still Forming in the Mist</h3>
+              <p>
+                Not every story arrives with a face. Some are still being shaped in the dark, where breath fogs cold air and the mist makes room for one more name.
+              </p>
+              <div class="card-actions">
+                <a class="button" href="characters/zeharith/">Enter the Mist</a>
+              </div>
+            </div>
+          </article>
         </div>
-        <div class="card-body">
-          <div class="card-label">Mistwalker IV</div>
-          <h2>The Next MARCed Soul</h2>
-          <h3>Still Forming in the Mist</h3>
-          <p>
-            Not every story arrives with a face. Some are still being shaped in the dark, where breath fogs cold air and the mist makes room for one more name.
-          </p>
-          <div class="card-actions">
-            <a class="button" href="characters/zeharith/">Enter the Mist</a>
-          </div>
-        </div>
-      </article>
+      </div>
     </section>
 
     <div class="footer-note">
