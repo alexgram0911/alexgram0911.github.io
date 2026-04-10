@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mistwalkers | Shared Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --bg2: #121215;
+      --panel: rgba(18, 18, 20, 0.82);
+      --panel-strong: rgba(14, 14, 16, 0.92);
+      --panel-soft: rgba(18, 18, 20, 0.72);
+      --text: #ddd6c8;
+      --muted: #a69d8e;
+      --line: rgba(202, 183, 143, 0.18);
+      --gold: #a98d59;
+      --gold-soft: rgba(169, 141, 89, 0.24);
+      --thimble: #8e819c;
+      --eldric: #7d8d5b;
+      --umashi: #b77a4b;
+      --unknown: #7d8189;
+      --danger: #8a6572;
+      --shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(180, 180, 180, 0.05), transparent 35%),
+        linear-gradient(to bottom, #0b0b0d 0%, #101014 45%, #0b0b0d 100%);
+      color: var(--text);
+      font-family: 'EB Garamond', serif;
+      overflow-x: hidden;
+    }
+
+    body {
+      position: relative;
+    }
+
+    .mist,
+    .mist::before,
+    .mist::after {
+      position: fixed;
+      inset: -10%;
+      pointer-events: none;
+      z-index: 0;
+      content: "";
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(255,255,255,0.035), transparent 40%),
+        radial-gradient(ellipse at 80% 40%, rgba(255,255,255,0.03), transparent 38%),
+        radial-gradient(ellipse at 50% 70%, rgba(255,255,255,0.025), transparent 42%);
+      filter: blur(36px);
+      animation: drift 26s ease-in-out infinite alternate;
+    }
+
+    .mist::before {
+      animation-duration: 35s;
+      opacity: 0.7;
+      transform: translateY(20px) scale(1.08);
+    }
+
+    .mist::after {
+      animation-duration: 42s;
+      opacity: 0.5;
+      transform: translateX(-20px) scale(1.12);
+    }
+
+    @keyframes drift {
+      0%   { transform: translate3d(-1%, 0, 0) scale(1); }
+      50%  { transform: translate3d(2%, 1.5%, 0) scale(1.04); }
+      100% { transform: translate3d(-2%, -1%, 0) scale(1.08); }
+    }
+
+    .ash {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ash span {
+      position: absolute;
+      display: block;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: rgba(220, 210, 190, 0.2);
+      box-shadow: 0 0 8px rgba(220, 210, 190, 0.12);
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      from {
+        transform: translateY(-10vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      to {
+        transform: translateY(110vh) translateX(30px);
+        opacity: 0;
+      }
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      width: min(1320px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 70px;
+    }
+
+    .content-rail {
+      width: 100%;
+      padding: 0 24px;
+    }
+
+    .hero,
+    .panel {
+      position: relative;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,0.015), rgba(255,255,255,0)),
+        var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero {
+      margin-bottom: 28px;
+    }
+
+    .hero::before,
+    .hero::after,
+    .panel-title-bar::before,
+    .panel-title-bar::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(185, 158, 103, 0.45), transparent);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .hero::before,
+    .panel-title-bar::before {
+      top: 18px;
+    }
+
+    .hero::after,
+    .panel-title-bar::after {
+      bottom: 18px;
+    }
+
+    .hero-inner {
+      text-align: center;
+      padding: 56px 0 40px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    h1,
+    h2,
+    h3,
+    .mist-button,
+    .button,
+    .mode-chip,
+    .legend-title {
+      font-family: 'Cinzel', serif;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      line-height: 1.05;
+      font-weight: 700;
+      color: #efe5d0;
+      text-shadow: 0 0 18px rgba(255, 226, 170, 0.06);
+    }
+
+    .subtitle {
+      width: min(820px, 100%);
+      margin: 18px auto 0;
+      font-size: clamp(1.08rem, 2.2vw, 1.3rem);
+      line-height: 1.65;
+      color: #c8bfae;
+    }
+
+    .quote {
+      width: min(760px, 100%);
+      margin: 24px auto 0;
+      padding-top: 18px;
+      border-top: 1px solid rgba(202, 183, 143, 0.16);
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      color: #a99f90;
+      font-style: italic;
+      margin-bottom: 24px;
+    }
+
+    .campaign-link {
+      margin-top: 34px;
+    }
+
+    .campaign-links {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 360px));
+      justify-content: center;
+      gap: 14px;
+      position: relative;
+      width: 100%;
+      max-width: 734px;
+      margin: 0 auto;
+    }
+
+    .campaign-links::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 42px;
+      height: 42px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(169, 141, 89, 0.16), transparent 70%);
+      filter: blur(10px);
+      opacity: 0.8;
+    }
+
+    .mist-button,
+    .button,
+    .mode-chip,
+    button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      text-align: center;
+      font-size: 0.95rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 12px 18px;
+      color: #efe5d0;
+      border: 1px solid rgba(202, 183, 143, 0.3);
+      background: linear-gradient(to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+      box-shadow:
+        0 0 18px rgba(200, 180, 140, 0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.02);
+      cursor: pointer;
+    }
+
+    .mist-button:hover,
+    .button:hover,
+    .mode-chip:hover,
+    button:hover {
+      transform: translateY(-3px);
+      border-color: rgba(202, 183, 143, 0.68);
+      box-shadow:
+        0 0 30px rgba(200, 180, 140, 0.18),
+        0 0 10px rgba(200, 180, 140, 0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .mist-button::before,
+    .button::before,
+    .mode-chip::before,
+    button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(200,180,140,0.22), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .mist-button:hover::before,
+    .button:hover::before,
+    .mode-chip:hover::before,
+    button:hover::before {
+      opacity: 1;
+    }
+
+    .mist-button::after,
+    .button::after,
+    .mode-chip::after,
+    button::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -130%;
+      width: 120%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), transparent);
+      transition: left 0.65s ease;
+    }
+
+    .mist-button:hover::after,
+    .button:hover::after,
+    .mode-chip:hover::after,
+    button:hover::after {
+      left: 130%;
+    }
+
+    .mist-button-map {
+      border-color: rgba(169, 141, 89, 0.4);
+    }
+
+    .mist-button-journal {
+      border-color: rgba(142, 129, 156, 0.32);
+    }
+
+    .mist-button-journal:hover {
+      border-color: rgba(142, 129, 156, 0.62);
+      box-shadow:
+        0 0 32px rgba(142, 129, 156, 0.18),
+        0 0 14px rgba(142, 129, 156, 0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 340px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .panel {
+      min-width: 0;
+    }
+
+    .panel-title-bar {
+      position: relative;
+      text-align: center;
+      padding: 34px 18px 30px;
+      border-bottom: 1px solid rgba(202, 183, 143, 0.12);
+    }
+
+    .panel-title-bar h2 {
+      margin: 0;
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: #efe2c8;
+    }
+
+    .panel-subtitle {
+      margin: 12px auto 0;
+      max-width: 620px;
+      color: #bca98a;
+      font-size: 1.03rem;
+      line-height: 1.65;
+    }
+
+    .panel-inner {
+      padding: 24px;
+    }
+
+    .tool-group + .tool-group {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(202, 183, 143, 0.12);
+    }
+
+    .tool-group h3,
+    .legend-title {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: #efe2c8;
+      text-transform: uppercase;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #bca98a;
+      font-size: 0.98rem;
+      letter-spacing: 0.02em;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid rgba(202, 183, 143, 0.18);
+      background: rgba(8, 8, 10, 0.66);
+      color: var(--text);
+      font: inherit;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: rgba(202, 183, 143, 0.42);
+      box-shadow: 0 0 0 3px rgba(169, 141, 89, 0.12);
+      background: rgba(10, 10, 12, 0.82);
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .button-row,
+    .toggle-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .toggle-row .mode-chip.active {
+      border-color: rgba(202, 183, 143, 0.62);
+      box-shadow:
+        0 0 28px rgba(200, 180, 140, 0.14),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
+      color: #fff0d3;
+    }
+
+    .warn {
+      border-color: rgba(138, 101, 114, 0.45) !important;
+      color: #e1c2ca !important;
+    }
+
+    .warn:hover {
+      border-color: rgba(173, 123, 141, 0.68) !important;
+      box-shadow:
+        0 0 30px rgba(173, 123, 141, 0.16),
+        0 0 10px rgba(173, 123, 141, 0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.04) !important;
+    }
+
+    .tool-note,
+    .help-text,
+    .status-line,
+    .empty-state,
+    .marker-meta,
+    .footer-note {
+      color: #a99f90;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .legend {
+      display: grid;
+      gap: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #cfc5b4;
+      font-size: 0.98rem;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.7);
+      flex: 0 0 auto;
+    }
+
+    .map-wrap {
+      padding: 24px;
+    }
+
+    .map-frame {
+      position: relative;
+      border: 1px solid rgba(202, 183, 143, 0.14);
+      background: var(--panel-strong);
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .map-frame::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(0,0,0,0.5), rgba(0,0,0,0.06) 40%, rgba(0,0,0,0.18)),
+        linear-gradient(to bottom right, transparent 40%, rgba(255,255,255,0.018));
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .map-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      min-height: 640px;
+      background: #111;
+      cursor: crosshair;
+      user-select: none;
+      touch-action: none;
+    }
+
+    #mapImage {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      filter: saturate(0.88) brightness(0.84) contrast(1.02);
+      background: #090909;
+    }
+
+    #drawLayer,
+    #markerLayer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .marker {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.82);
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.06), 0 0 18px rgba(255,255,255,0.12);
+      cursor: pointer;
+      z-index: 3;
+      background: var(--gold);
+    }
+
+    .marker.player { background: #8e819c; }
+    .marker.dm { background: #b77a4b; }
+    .marker.poi { background: #a98d59; }
+    .marker.danger { background: #7d8d5b; }
+
+    .marker.selected {
+      box-shadow: 0 0 0 6px rgba(255,255,255,0.10), 0 0 20px rgba(220,233,235,0.22);
+    }
+
+    .map-toolbar {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      border-top: 1px solid rgba(202, 183, 143, 0.12);
+      background: rgba(10, 10, 12, 0.88);
+    }
+
+    .toolbar-block {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .marker-list {
+      display: grid;
+      gap: 10px;
+      max-height: 360px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .marker-card {
+      border: 1px solid rgba(202, 183, 143, 0.14);
+      background: rgba(14, 14, 16, 0.72);
+      padding: 12px 13px;
+      cursor: pointer;
+      transition: transform 0.28s ease, border-color 0.28s ease, background 0.28s ease;
+    }
+
+    .marker-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(202, 183, 143, 0.28);
+      background: rgba(18, 18, 20, 0.88);
+    }
+
+    .marker-card.selected {
+      border-color: rgba(202, 183, 143, 0.42);
+      background: rgba(20, 20, 22, 0.96);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .marker-title {
+      margin: 0 0 6px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #efe2c8;
+    }
+
+    .marker-card p {
+      margin: 0;
+      color: #cfc5b4;
+      font-size: 0.98rem;
+      line-height: 1.5;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 36px;
+      padding: 28px 18px 0;
+      border-top: 1px solid rgba(202, 183, 143, 0.12);
+      font-style: italic;
+    }
+
+    @media (max-width: 1060px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .map-stage {
+        min-height: 520px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-wrap {
+        width: min(100% - 20px, 1320px);
+        padding-top: 24px;
+      }
+
+      .content-rail {
+        padding: 0;
+      }
+
+      .hero-inner {
+        padding: 38px 18px 28px;
+      }
+
+      .panel-inner,
+      .map-wrap {
+        padding: 18px;
+      }
+
+      .campaign-links {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+        gap: 12px;
+      }
+
+      .campaign-links::before {
+        display: none;
+      }
+
+      .mist-button {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        text-align: center;
+        padding: 16px 18px;
+        letter-spacing: 0.14em;
+      }
+
+      .map-stage {
+        min-height: 380px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mist"></div>
+
+  <div class="ash" aria-hidden="true">
+    <span style="left: 4%; animation-duration: 18s; animation-delay: -3s;"></span>
+    <span style="left: 11%; animation-duration: 24s; animation-delay: -9s;"></span>
+    <span style="left: 18%; animation-duration: 20s; animation-delay: -5s;"></span>
+    <span style="left: 26%; animation-duration: 27s; animation-delay: -11s;"></span>
+    <span style="left: 33%; animation-duration: 19s; animation-delay: -4s;"></span>
+    <span style="left: 40%; animation-duration: 25s; animation-delay: -14s;"></span>
+    <span style="left: 47%; animation-duration: 21s; animation-delay: -7s;"></span>
+    <span style="left: 54%; animation-duration: 29s; animation-delay: -17s;"></span>
+    <span style="left: 61%; animation-duration: 23s; animation-delay: -6s;"></span>
+    <span style="left: 68%; animation-duration: 18s; animation-delay: -8s;"></span>
+    <span style="left: 75%; animation-duration: 30s; animation-delay: -12s;"></span>
+    <span style="left: 82%; animation-duration: 22s; animation-delay: -10s;"></span>
+    <span style="left: 89%; animation-duration: 26s; animation-delay: -15s;"></span>
+    <span style="left: 95%; animation-duration: 20s; animation-delay: -2s;"></span>
+  </div>
+
+  <main class="page-wrap">
+    <section class="hero">
+      <div class="content-rail">
+        <div class="hero-inner">
+          <div class="eyebrow">The Mists of Radjya</div>
+          <h1>The Mistwalkers Map</h1>
+          <p class="subtitle">
+            The Mists remember what was marked upon them. Pin a warning, trace a route, or leave a fragment of knowledge for the next soul to wander through the veil.
+          </p>
+
+          <div class="quote">
+            “Some paths are found. Others are left behind like a warning scratched into wet stone.”
+          </div>
+
+          <div class="campaign-link campaign-links">
+            <a href="https://www.dndbeyond.com/campaigns/7606081" target="_blank" class="mist-button mist-button-main">
+              Enter the Mists of Radjya
+            </a>
+            <a href="journal/" class="mist-button mist-button-journal">
+              Open Session Journal
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <aside class="panel">
+        <div class="panel-title-bar">
+          <h2>Map Tools</h2>
+          <div class="panel-subtitle">Shared notes, pinned warnings, and routes through the fog.</div>
+        </div>
+
+        <div class="panel-inner">
+          <div class="tool-group">
+            <label for="mapImageUrl">Map image URL</label>
+            <input id="mapImageUrl" type="text" placeholder="images/radjya-map.jpg" />
+            <div class="button-row">
+              <button id="loadMapBtn" type="button">Load Map</button>
+            </div>
+            <p class="tool-note">Use a local image path from your repo or a full image URL.</p>
+          </div>
+
+          <div class="tool-group">
+            <h3>Mode</h3>
+            <div class="toggle-row">
+              <button class="mode-chip active" data-mode="pan" type="button">Pan / View</button>
+              <button class="mode-chip" data-mode="pin" type="button">Place Pin</button>
+              <button class="mode-chip" data-mode="draw" type="button">Draw Route</button>
+            </div>
+          </div>
+
+          <div class="tool-group">
+            <label for="markerType">Pin type</label>
+            <select id="markerType">
+              <option value="player">Player Marker</option>
+              <option value="poi">Point of Interest</option>
+              <option value="danger">Danger</option>
+              <option value="dm">DM Marker</option>
+            </select>
+          </div>
+
+          <div class="tool-group">
+            <label for="markerTitle">Marker title</label>
+            <input id="markerTitle" type="text" placeholder="Ruined Shrine" />
+
+            <label for="markerNote" style="margin-top: 12px;">Marker note</label>
+            <textarea id="markerNote" placeholder="The fog thins here at dusk. We heard bells."></textarea>
+
+            <div class="button-row">
+              <button id="saveMarkerBtn" type="button">Save Selected</button>
+              <button id="deleteMarkerBtn" class="warn" type="button">Delete Selected</button>
+            </div>
+            <p class="help-text">In Place Pin mode, click the map to create a new marker. Click an existing marker to edit it.</p>
+          </div>
+
+          <div class="tool-group">
+            <div class="legend-title">Legend</div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-swatch" style="background:#8e819c"></span> Player marker</div>
+              <div class="legend-item"><span class="legend-swatch" style="background:#a98d59"></span> Point of interest</div>
+              <div class="legend-item"><span class="legend-swatch" style="background:#7d8d5b"></span> Danger</div>
+              <div class="legend-item"><span class="legend-swatch" style="background:#b77a4b"></span> DM marker</div>
+            </div>
+          </div>
+
+          <div class="tool-group">
+            <h3>Stored Markers</h3>
+            <div id="markerList" class="marker-list">
+              <div class="empty-state">No markers yet. The map is quiet... for now.</div>
+            </div>
+          </div>
+
+          <div class="tool-group">
+            <h3>Status</h3>
+            <p id="statusLine" class="status-line">Waiting on Supabase configuration.</p>
+          </div>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <div class="panel-title-bar">
+          <h2>Shared Cartography</h2>
+          <div class="panel-subtitle">Every mark made here lingers for the whole party, like candle smoke caught in old stone.</div>
+        </div>
+
+        <div class="map-wrap">
+          <div class="map-frame">
+            <div id="mapStage" class="map-stage">
+              <img id="mapImage" alt="Campaign map" />
+              <canvas id="drawLayer"></canvas>
+              <div id="markerLayer"></div>
+            </div>
+
+            <div class="map-toolbar">
+              <div class="toolbar-block">
+                <button id="saveDrawingBtn" type="button">Save Drawing Layer</button>
+                <button id="clearLocalDrawingBtn" class="warn" type="button">Clear Unsaved Drawing</button>
+              </div>
+              <div class="toolbar-block">
+                <span class="tool-note">Drawing saves as one shared overlay for the party.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            Some maps show where you can go. Better ones remember where you should not.
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const SUPABASE_URL = 'PASTE_YOUR_SUPABASE_URL_HERE';
+    const SUPABASE_ANON_KEY = 'PASTE_YOUR_SUPABASE_ANON_KEY_HERE';
+    const DEFAULT_MAP_IMAGE = 'images/radjya-map.jpg';
+    const DRAWING_LAYER_ID = 'shared-main';
+
+    const statusLine = document.getElementById('statusLine');
+    const mapStage = document.getElementById('mapStage');
+    const mapImage = document.getElementById('mapImage');
+    const markerLayer = document.getElementById('markerLayer');
+    const markerList = document.getElementById('markerList');
+    const mapImageUrlInput = document.getElementById('mapImageUrl');
+    const loadMapBtn = document.getElementById('loadMapBtn');
+
+    const markerTypeInput = document.getElementById('markerType');
+    const markerTitleInput = document.getElementById('markerTitle');
+    const markerNoteInput = document.getElementById('markerNote');
+    const saveMarkerBtn = document.getElementById('saveMarkerBtn');
+    const deleteMarkerBtn = document.getElementById('deleteMarkerBtn');
+
+    const saveDrawingBtn = document.getElementById('saveDrawingBtn');
+    const clearLocalDrawingBtn = document.getElementById('clearLocalDrawingBtn');
+
+    const drawCanvas = document.getElementById('drawLayer');
+    const ctx = drawCanvas.getContext('2d');
+    const modeButtons = [...document.querySelectorAll('[data-mode]')];
+
+    let supabase = null;
+    let mode = 'pan';
+    let selectedMarkerId = null;
+    let markers = [];
+    let drawingStrokes = [];
+    let currentStroke = null;
+    let isDrawing = false;
+
+    function setStatus(text) {
+      statusLine.textContent = text;
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      modeButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === nextMode));
+      mapStage.style.cursor = nextMode === 'draw' ? 'crosshair' : (nextMode === 'pin' ? 'copy' : 'default');
+    }
+
+    function resizeCanvas() {
+      const rect = mapStage.getBoundingClientRect();
+      drawCanvas.width = rect.width;
+      drawCanvas.height = rect.height;
+      redrawAllStrokes();
+      renderMarkers();
+    }
+
+    function loadMapImage(url) {
+      mapImage.src = url;
+      mapImage.onload = () => {
+        resizeCanvas();
+        setStatus('Map loaded. The fog has settled.');
+      };
+      mapImage.onerror = () => {
+        setStatus('Could not load that map image path.');
+      };
+    }
+
+    function getNormalizedPoint(event) {
+      const rect = mapStage.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width;
+      const y = (event.clientY - rect.top) / rect.height;
+      return {
+        x: Math.max(0, Math.min(1, x)),
+        y: Math.max(0, Math.min(1, y))
+      };
+    }
+
+    function normalizedToPixels(point) {
+      const rect = mapStage.getBoundingClientRect();
+      return {
+        x: point.x * rect.width,
+        y: point.y * rect.height
+      };
+    }
+
+    function clearMarkerForm() {
+      selectedMarkerId = null;
+      markerTitleInput.value = '';
+      markerNoteInput.value = '';
+      markerTypeInput.value = 'player';
+      renderMarkers();
+      renderMarkerList();
+    }
+
+    function populateMarkerForm(marker) {
+      selectedMarkerId = marker.id;
+      markerTitleInput.value = marker.title || '';
+      markerNoteInput.value = marker.note || '';
+      markerTypeInput.value = marker.type || 'player';
+      renderMarkers();
+      renderMarkerList();
+    }
+
+    function renderMarkers() {
+      markerLayer.innerHTML = '';
+      const rect = mapStage.getBoundingClientRect();
+
+      markers.forEach(marker => {
+        const el = document.createElement('button');
+        el.type = 'button';
+        el.className = `marker ${marker.type || 'player'} ${marker.id === selectedMarkerId ? 'selected' : ''}`;
+        el.style.left = `${marker.x * rect.width}px`;
+        el.style.top = `${marker.y * rect.height}px`;
+        el.title = marker.title || 'Marker';
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          populateMarkerForm(marker);
+          setStatus(`Selected marker: ${marker.title || 'Untitled marker'}`);
+        });
+        markerLayer.appendChild(el);
+      });
+    }
+
+    function renderMarkerList() {
+      if (!markers.length) {
+        markerList.innerHTML = '<div class="empty-state">No markers yet. The map is quiet... for now.</div>';
+        return;
+      }
+
+      const sorted = [...markers].sort((a, b) => new Date(b.updated_at || b.created_at || 0) - new Date(a.updated_at || a.created_at || 0));
+      markerList.innerHTML = sorted.map(marker => `
+        <div class="marker-card ${marker.id === selectedMarkerId ? 'selected' : ''}" data-id="${marker.id}">
+          <div class="marker-title">${escapeHtml(marker.title || 'Untitled marker')}</div>
+          <p>${escapeHtml(marker.note || 'No note yet.')}</p>
+          <p class="marker-meta" style="margin-top:8px;">Type: ${escapeHtml(marker.type || 'player')}</p>
+        </div>
+      `).join('');
+
+      [...markerList.querySelectorAll('.marker-card')].forEach(card => {
+        card.addEventListener('click', () => {
+          const marker = markers.find(m => m.id === card.dataset.id);
+          if (marker) {
+            populateMarkerForm(marker);
+            setStatus(`Selected marker: ${marker.title || 'Untitled marker'}`);
+          }
+        });
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function drawStroke(stroke) {
+      if (!stroke?.points?.length) return;
+      ctx.beginPath();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'rgba(223, 211, 181, 0.92)';
+
+      stroke.points.forEach((point, index) => {
+        const px = normalizedToPixels(point);
+        if (index === 0) ctx.moveTo(px.x, px.y);
+        else ctx.lineTo(px.x, px.y);
+      });
+
+      ctx.stroke();
+    }
+
+    function redrawAllStrokes() {
+      ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+      drawingStrokes.forEach(drawStroke);
+      if (currentStroke) drawStroke(currentStroke);
+    }
+
+    async function fetchMarkers() {
+      if (!supabase) return;
+      const { data, error } = await supabase
+        .from('map_markers')
+        .select('*')
+        .order('updated_at', { ascending: false });
+
+      if (error) {
+        console.error(error);
+        setStatus('Could not load markers from Supabase.');
+        return;
+      }
+
+      markers = data || [];
+      renderMarkers();
+      renderMarkerList();
+    }
+
+    async function fetchDrawingLayer() {
+      if (!supabase) return;
+      const { data, error } = await supabase
+        .from('map_layers')
+        .select('*')
+        .eq('id', DRAWING_LAYER_ID)
+        .maybeSingle();
+
+      if (error) {
+        console.error(error);
+        setStatus('Could not load drawing layer.');
+        return;
+      }
+
+      drawingStrokes = Array.isArray(data?.drawing_data) ? data.drawing_data : [];
+      redrawAllStrokes();
+    }
+
+    async function saveMarker(marker) {
+      if (!supabase) {
+        setStatus('Supabase is not configured yet.');
+        return;
+      }
+
+      const payload = {
+        title: marker.title || 'Untitled marker',
+        note: marker.note || '',
+        type: marker.type || 'player',
+        x: marker.x,
+        y: marker.y,
+        updated_at: new Date().toISOString()
+      };
+
+      let response;
+
+      if (marker.id) {
+        response = await supabase
+          .from('map_markers')
+          .update(payload)
+          .eq('id', marker.id)
+          .select()
+          .single();
+      } else {
+        payload.created_at = new Date().toISOString();
+        response = await supabase
+          .from('map_markers')
+          .insert(payload)
+          .select()
+          .single();
+      }
+
+      if (response.error) {
+        console.error(response.error);
+        setStatus('Marker could not be saved.');
+        return;
+      }
+
+      const saved = response.data;
+      const existingIndex = markers.findIndex(m => m.id === saved.id);
+      if (existingIndex >= 0) markers[existingIndex] = saved;
+      else markers.unshift(saved);
+
+      populateMarkerForm(saved);
+      renderMarkers();
+      renderMarkerList();
+      setStatus(`Saved marker: ${saved.title}`);
+    }
+
+    async function deleteSelectedMarker() {
+      if (!supabase || !selectedMarkerId) {
+        setStatus('Choose a marker first.');
+        return;
+      }
+
+      const { error } = await supabase
+        .from('map_markers')
+        .delete()
+        .eq('id', selectedMarkerId);
+
+      if (error) {
+        console.error(error);
+        setStatus('Could not delete that marker.');
+        return;
+      }
+
+      markers = markers.filter(m => m.id !== selectedMarkerId);
+      clearMarkerForm();
+      setStatus('Marker removed from the map.');
+    }
+
+    async function saveDrawingLayer() {
+      if (!supabase) {
+        setStatus('Supabase is not configured yet.');
+        return;
+      }
+
+      const payload = {
+        id: DRAWING_LAYER_ID,
+        drawing_data: drawingStrokes,
+        updated_at: new Date().toISOString()
+      };
+
+      const { error } = await supabase
+        .from('map_layers')
+        .upsert(payload, { onConflict: 'id' });
+
+      if (error) {
+        console.error(error);
+        setStatus('Drawing layer could not be saved.');
+        return;
+      }
+
+      setStatus('Shared drawing layer saved.');
+    }
+
+    function beginStroke(point) {
+      currentStroke = { points: [point] };
+      isDrawing = true;
+      redrawAllStrokes();
+    }
+
+    function extendStroke(point) {
+      if (!currentStroke) return;
+      currentStroke.points.push(point);
+      redrawAllStrokes();
+    }
+
+    function finishStroke() {
+      if (!currentStroke) return;
+      if (currentStroke.points.length > 1) {
+        drawingStrokes.push(currentStroke);
+      }
+      currentStroke = null;
+      isDrawing = false;
+      redrawAllStrokes();
+    }
+
+    function createPendingMarker(point) {
+      const temp = {
+        x: point.x,
+        y: point.y,
+        title: markerTitleInput.value.trim() || 'Untitled marker',
+        note: markerNoteInput.value.trim(),
+        type: markerTypeInput.value
+      };
+      saveMarker(temp);
+    }
+
+    function bindRealtime() {
+      if (!supabase) return;
+
+      supabase
+        .channel('mistwalkers-map-markers')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'map_markers' }, async () => {
+          await fetchMarkers();
+        })
+        .subscribe();
+
+      supabase
+        .channel('mistwalkers-map-layers')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'map_layers' }, async () => {
+          await fetchDrawingLayer();
+        })
+        .subscribe();
+    }
+
+    function setupSupabase() {
+      if (SUPABASE_URL.startsWith('PASTE_') || SUPABASE_ANON_KEY.startsWith('PASTE_')) {
+        setStatus('Paste in your Supabase URL and anon key to activate shared storage.');
+        return;
+      }
+
+      supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      setStatus('Supabase connected. Pulling map state from the fog...');
+      fetchMarkers();
+      fetchDrawingLayer();
+      bindRealtime();
+    }
+
+    loadMapBtn.addEventListener('click', () => {
+      const url = mapImageUrlInput.value.trim() || DEFAULT_MAP_IMAGE;
+      loadMapImage(url);
+    });
+
+    saveMarkerBtn.addEventListener('click', async () => {
+      if (!selectedMarkerId) {
+        setStatus('Select a marker or place a new one on the map first.');
+        return;
+      }
+
+      const marker = markers.find(m => m.id === selectedMarkerId);
+      if (!marker) {
+        setStatus('That marker could not be found.');
+        return;
+      }
+
+      await saveMarker({
+        ...marker,
+        title: markerTitleInput.value.trim() || 'Untitled marker',
+        note: markerNoteInput.value.trim(),
+        type: markerTypeInput.value
+      });
+    });
+
+    deleteMarkerBtn.addEventListener('click', deleteSelectedMarker);
+
+    saveDrawingBtn.addEventListener('click', saveDrawingLayer);
+    clearLocalDrawingBtn.addEventListener('click', () => {
+      drawingStrokes = [];
+      currentStroke = null;
+      redrawAllStrokes();
+      setStatus('Local drawing cleared. Save if you want the wipe shared.');
+    });
+
+    modeButtons.forEach(btn => {
+      btn.addEventListener('click', () => setMode(btn.dataset.mode));
+    });
+
+    mapStage.addEventListener('click', (event) => {
+      if (mode !== 'pin') return;
+      if (event.target.closest('.marker')) return;
+      const point = getNormalizedPoint(event);
+      createPendingMarker(point);
+    });
+
+    mapStage.addEventListener('pointerdown', (event) => {
+      if (mode !== 'draw') return;
+      const point = getNormalizedPoint(event);
+      beginStroke(point);
+    });
+
+    mapStage.addEventListener('pointermove', (event) => {
+      if (mode !== 'draw' || !isDrawing) return;
+      const point = getNormalizedPoint(event);
+      extendStroke(point);
+    });
+
+    mapStage.addEventListener('pointerup', () => {
+      if (mode !== 'draw') return;
+      finishStroke();
+    });
+
+    mapStage.addEventListener('pointerleave', () => {
+      if (mode !== 'draw' && !isDrawing) return;
+      if (isDrawing) finishStroke();
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+
+    mapImageUrlInput.value = DEFAULT_MAP_IMAGE;
+    loadMapImage(DEFAULT_MAP_IMAGE);
+    setMode('pan');
+    setupSupabase();
+
+    window.mistMap = {
+      clearMarkerForm,
+      fetchMarkers,
+      fetchDrawingLayer,
+      saveDrawingLayer
+    };
+  </script>
+</body>
+</html>
