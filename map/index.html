@@ -224,9 +224,10 @@
     }
 
     .campaign-links {
-      display: grid;
-      grid-template-columns: 1fr;
-      max-width: 360px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-width: 100%;
       justify-content: center;
       gap: 14px;
       position: relative;
@@ -273,6 +274,14 @@
         0 0 18px rgba(200, 180, 140, 0.08),
         inset 0 0 0 1px rgba(255,255,255,0.02);
       cursor: pointer;
+    }
+
+    .campaign-links .mist-button {
+      width: auto;
+      max-width: 260px;
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
     }
 
     .mist-button:hover,
