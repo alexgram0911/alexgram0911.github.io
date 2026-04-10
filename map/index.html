@@ -346,6 +346,24 @@
       color: #fff0d3;
     }
 
+    .mode-chip[data-mode="draw"] {
+      border-color: rgba(196, 58, 58, 0.55);
+      color: #ffd8d8;
+      box-shadow: 0 0 18px rgba(196, 58, 58, 0.12), inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .mode-chip[data-mode="draw"]:hover {
+      border-color: rgba(235, 74, 74, 0.82);
+      box-shadow: 0 0 28px rgba(235, 74, 74, 0.22), 0 0 10px rgba(235, 74, 74, 0.12), inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .toggle-row .mode-chip[data-mode="draw"].active {
+      border-color: rgba(255, 86, 86, 0.95);
+      color: #fff0f0;
+      background: linear-gradient(to bottom, rgba(255,100,100,0.18), rgba(255,60,60,0.08));
+      box-shadow: 0 0 34px rgba(255, 86, 86, 0.28), inset 0 0 0 1px rgba(255,255,255,0.05);
+    }
+
     .warn {
       border-color: rgba(138, 101, 114, 0.45) !important;
       color: #e1c2ca !important;
@@ -569,7 +587,8 @@
     <section class="layout">
       <aside class="panel">
         <div class="panel-title-bar">
-          <h2>Otteriel</h2>
+          <h2>Field Notes</h2>
+          <div class="panel-subtitle">Simple tools for shared marks in the fog.</div>
         </div>
 
         <div class="panel-inner">
@@ -617,6 +636,7 @@
             <div class="mini-title">Drawing</div>
             <div class="button-row">
               <button id="saveDrawingBtn" type="button">Save Drawing</button>
+              <button id="undoLastDrawingBtn" type="button">Undo Last</button>
               <button id="clearLocalDrawingBtn" class="warn" type="button">Clear Local</button>
             </div>
             <p class="help-text">Routes and circles are shared with everyone once saved.</p>
@@ -627,6 +647,7 @@
       <section class="panel">
         <div class="panel-title-bar">
           <h2>Shared Cartography</h2>
+          <div class="panel-subtitle">Smaller marks, wider map, steadier hands.</div>
         </div>
 
         <div class="map-wrap">
@@ -682,6 +703,7 @@
     const saveMarkerBtn = document.getElementById('saveMarkerBtn');
     const deleteMarkerBtn = document.getElementById('deleteMarkerBtn');
     const saveDrawingBtn = document.getElementById('saveDrawingBtn');
+    const undoLastDrawingBtn = document.getElementById('undoLastDrawingBtn');
     const clearLocalDrawingBtn = document.getElementById('clearLocalDrawingBtn');
     const zoomOutBtn = document.getElementById('zoomOutBtn');
     const zoomInBtn = document.getElementById('zoomInBtn');
@@ -1051,6 +1073,17 @@
 
     deleteMarkerBtn.addEventListener('click', deleteSelectedMarker);
     saveDrawingBtn.addEventListener('click', saveDrawingLayer);
+    undoLastDrawingBtn.addEventListener('click', () => {
+      if (currentStroke && currentStroke.points?.length) {
+        currentStroke = null;
+        isDrawing = false;
+        redrawAllStrokes();
+        return;
+      }
+      if (!drawingStrokes.length) return;
+      drawingStrokes.pop();
+      redrawAllStrokes();
+    });
     clearLocalDrawingBtn.addEventListener('click', () => {
       drawingStrokes = [];
       currentStroke = null;
