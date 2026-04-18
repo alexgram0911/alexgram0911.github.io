@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session Recaps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --bg2: #121215;
+      --panel: rgba(18, 18, 20, 0.82);
+      --panel-strong: rgba(14, 14, 16, 0.92);
+      --text: #ddd6c8;
+      --muted: #a69d8e;
+      --line: rgba(202, 183, 143, 0.18);
+      --gold: #a98d59;
+      --gold-soft: rgba(169, 141, 89, 0.24);
+      --shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(180, 180, 180, 0.05), transparent 35%),
+        linear-gradient(to bottom, #0b0b0d 0%, #101014 45%, #0b0b0d 100%);
+      color: var(--text);
+      font-family: 'EB Garamond', serif;
+      overflow-x: hidden;
+    }
+
+    body {
+      position: relative;
+    }
+
+    .mist,
+    .mist::before,
+    .mist::after {
+      position: fixed;
+      inset: -10%;
+      pointer-events: none;
+      z-index: 0;
+      content: "";
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(255,255,255,0.035), transparent 40%),
+        radial-gradient(ellipse at 80% 40%, rgba(255,255,255,0.03), transparent 38%),
+        radial-gradient(ellipse at 50% 70%, rgba(255,255,255,0.025), transparent 42%);
+      filter: blur(36px);
+      animation: drift 26s ease-in-out infinite alternate;
+    }
+
+    .mist::before {
+      animation-duration: 35s;
+      opacity: 0.7;
+      transform: translateY(20px) scale(1.08);
+    }
+
+    .mist::after {
+      animation-duration: 42s;
+      opacity: 0.5;
+      transform: translateX(-20px) scale(1.12);
+    }
+
+    @keyframes drift {
+      0%   { transform: translate3d(-1%, 0, 0) scale(1); }
+      50%  { transform: translate3d(2%, 1.5%, 0) scale(1.04); }
+      100% { transform: translate3d(-2%, -1%, 0) scale(1.08); }
+    }
+
+    .ash {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ash span {
+      position: absolute;
+      display: block;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: rgba(220, 210, 190, 0.2);
+      box-shadow: 0 0 8px rgba(220, 210, 190, 0.12);
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      from {
+        transform: translateY(-10vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      to {
+        transform: translateY(110vh) translateX(30px);
+        opacity: 0;
+      }
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 70px;
+    }
+
+    .content-rail {
+      width: 100%;
+      padding: 0 24px;
+    }
+
+    .hero {
+      position: relative;
+      margin-bottom: 32px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,0.015), rgba(255,255,255,0)),
+        var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(185, 158, 103, 0.45), transparent);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .hero::before {
+      top: 18px;
+    }
+
+    .hero::after {
+      bottom: 18px;
+    }
+
+    .hero-inner {
+      text-align: center;
+      padding: 56px 0 40px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      line-height: 1.05;
+      font-weight: 700;
+      color: #efe5d0;
+      text-shadow: 0 0 18px rgba(255, 226, 170, 0.06);
+    }
+
+    .subtitle {
+      width: min(780px, 100%);
+      margin: 18px auto 0;
+      font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+      line-height: 1.65;
+      color: #c8bfae;
+    }
+
+    .quote {
+      width: min(760px, 100%);
+      margin: 24px auto 0;
+      padding-top: 18px;
+      border-top: 1px solid rgba(202, 183, 143, 0.16);
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      color: #a99f90;
+      font-style: italic;
+      margin-bottom: 24px;
+    }
+
+    .campaign-link {
+      margin-top: 34px;
+    }
+
+    .campaign-links {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 360px));
+      justify-content: center;
+      gap: 14px;
+      position: relative;
+      width: 100%;
+      max-width: 734px;
+      margin: 0 auto;
+    }
+
+    .campaign-links::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 42px;
+      height: 42px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(169, 141, 89, 0.16), transparent 70%);
+      filter: blur(10px);
+      opacity: 0.8;
+    }
+
+    .mist-button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      min-width: 0;
+      min-height: 58px;
+      text-decoration: none;
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 16px 24px;
+      color: #efe5d0;
+      border: 1px solid rgba(202, 183, 143, 0.4);
+      background: linear-gradient(to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+      box-shadow:
+        0 0 18px rgba(200, 180, 140, 0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .mist-button:hover {
+      transform: translateY(-3px);
+      border-color: rgba(202, 183, 143, 0.68);
+      box-shadow:
+        0 0 30px rgba(200, 180, 140, 0.18),
+        0 0 10px rgba(200, 180, 140, 0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .mist-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(200,180,140,0.22), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .mist-button:hover::before {
+      opacity: 1;
+    }
+
+    .mist-button::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -130%;
+      width: 120%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.12),
+        transparent
+      );
+      transition: left 0.65s ease;
+    }
+
+    .mist-button:hover::after {
+      left: 130%;
+    }
+
+    .mist-button-secondary {
+      border-color: rgba(142, 129, 156, 0.32);
+    }
+
+    .mist-button-secondary:hover {
+      border-color: rgba(142, 129, 156, 0.62);
+      box-shadow:
+        0 0 32px rgba(142, 129, 156, 0.18),
+        0 0 14px rgba(142, 129, 156, 0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .recaps-section {
+      margin-top: 0;
+    }
+
+    .recaps-panel {
+      position: relative;
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .recaps-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(0,0,0,0.35), rgba(0,0,0,0.08) 40%, rgba(255,255,255,0.015));
+      pointer-events: none;
+    }
+
+    .recaps-inner {
+      position: relative;
+      z-index: 1;
+      padding: 30px 28px;
+    }
+
+    .recap-entry {
+      padding: 26px 0;
+      border-bottom: 1px solid rgba(202, 183, 143, 0.12);
+    }
+
+    .recap-entry:first-child {
+      padding-top: 0;
+    }
+
+    .recap-entry:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .recap-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .recap-title {
+      margin: 0 0 8px;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 3.4vw, 2.4rem);
+      font-weight: 600;
+      line-height: 1.1;
+      color: #efe2c8;
+    }
+
+    .recap-date {
+      margin-bottom: 16px;
+      font-size: 1rem;
+      color: #bca98a;
+      letter-spacing: 0.03em;
+    }
+
+    .recap-body {
+      font-size: 1.08rem;
+      line-height: 1.7;
+      color: #cfc5b4;
+    }
+
+    .recap-body p {
+      margin: 0 0 14px;
+    }
+
+    .recap-body ul {
+      margin: 0 0 14px 22px;
+      padding: 0;
+    }
+
+    .recap-body li {
+      margin-bottom: 8px;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 36px;
+      padding: 28px 18px 0;
+      border-top: 1px solid rgba(202, 183, 143, 0.12);
+      color: #968d80;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      font-style: italic;
+    }
+
+    @media (max-width: 640px) {
+      .page-wrap {
+        width: min(100% - 20px, 1200px);
+        padding-top: 24px;
+      }
+
+      .content-rail {
+        padding: 0;
+      }
+
+      .hero-inner {
+        padding: 38px 18px 28px;
+      }
+
+      .recaps-inner {
+        padding: 22px 18px;
+      }
+
+      .campaign-links {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+        gap: 12px;
+      }
+
+      .campaign-links::before {
+        display: none;
+      }
+
+      .mist-button {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        text-align: center;
+        padding: 16px 18px;
+        letter-spacing: 0.14em;
+      }
+
+      .recap-body {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mist"></div>
+
+  <div class="ash" aria-hidden="true">
+    <span style="left: 4%; animation-duration: 18s; animation-delay: -3s;"></span>
+    <span style="left: 11%; animation-duration: 24s; animation-delay: -9s;"></span>
+    <span style="left: 18%; animation-duration: 20s; animation-delay: -5s;"></span>
+    <span style="left: 26%; animation-duration: 27s; animation-delay: -11s;"></span>
+    <span style="left: 33%; animation-duration: 19s; animation-delay: -4s;"></span>
+    <span style="left: 40%; animation-duration: 25s; animation-delay: -14s;"></span>
+    <span style="left: 47%; animation-duration: 21s; animation-delay: -7s;"></span>
+    <span style="left: 54%; animation-duration: 29s; animation-delay: -17s;"></span>
+    <span style="left: 61%; animation-duration: 23s; animation-delay: -6s;"></span>
+    <span style="left: 68%; animation-duration: 18s; animation-delay: -8s;"></span>
+    <span style="left: 75%; animation-duration: 30s; animation-delay: -12s;"></span>
+    <span style="left: 82%; animation-duration: 22s; animation-delay: -10s;"></span>
+    <span style="left: 89%; animation-duration: 26s; animation-delay: -15s;"></span>
+    <span style="left: 95%; animation-duration: 20s; animation-delay: -2s;"></span>
+  </div>
+
+  <main class="page-wrap">
+    <section class="hero">
+      <div class="content-rail">
+        <div class="hero-inner">
+          <div class="eyebrow">The Mists of Radjya</div>
+          <h1>Session Recaps</h1>
+          <p class="subtitle">
+            A record of what the Mistwalkers found in the fog, what followed them back out,
+            and what the Mists chose not to bury.
+          </p>
+
+          <div class="quote">
+            “Some roads are remembered by maps. Others only by the things that survived them.”
+          </div>
+
+          <div class="campaign-link campaign-links">
+            <a href="../index.html" class="mist-button">
+              Back to Main Page
+            </a>
+            <a href="../journal/" class="mist-button mist-button-secondary">
+              Open Session Journal
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="recaps-section">
+      <div class="content-rail">
+        <div class="recaps-panel">
+          <div class="recaps-inner">
+
+            <article class="recap-entry">
+              <div class="recap-label">Session 1</div>
+              <h2 class="recap-title">And so it Begins</h2>
+              <div class="recap-date">April 17, 2026</div>
+              <div class="recap-body">
+                <p>
+                 <p>
+  The party woke outside the Moss Woods alongside runners William and Matty, both marked by scars from a recent fight near the Anchorpine Forest. They carried payment of 16 silver and a message from Millwright, tied to Lady Alexa Provast and her operations out of The Mill.
+</p>
+
+<p>
+  The group was directed to a dead drop in Eiremoss (Telton St.) for their next job. Entering through the Southern Gate, they noted a heavier guard presence than usual but passed without issue, securing their mounts at The Mill before heading to the drop.
+</p>
+
+<p>
+  At the dead drop, they found three children and two guards, one distracted by a street con. Umashi noticed someone watching from a nearby window who quickly withdrew upon being seen. Using a coordinated distraction, the party retrieved the drop unnoticed.
+</p>
+
+<p>
+  The new job directed them to Drausvine Hospital, where they were to assist Dr. Stret, who owed Millwright, by extracting live bodies from the morgue.
+</p>
+
+<p>
+  Before moving on the hospital, Thimble and Eldric stopped at The Mill, meeting Dribble, Martin, and The Pelt. From them, the party acquired four blades, confirming that more than one individual would need to be rescued. With preparation complete, they regrouped with Zeharith and Umashi, who had begun scouting the hospital.
+</p>
+
+<p>
+  Reconnaissance revealed Drausvine Hospital to be relatively quiet, with two entrances, lighted paths, and roof access via lattice. Zeharith’s familiar, Mittens, scouted inside, revealing rooms filled with dead or near-dead patients, a gated stairwell leading downward, and active morgue work in the southern section, with only a single Orderly moving throughout the building.
+</p>
+
+<p>
+  Inside, the party encountered Jane, a well-read clerk who noted that Dr. Stret had been locked in his office for hours and that visitors typically arrived later at night. The Orderly, Peter, revealed himself as their inside contact, warning them they had arrived too early and expressing concern not about Stret, but about Dr. Wembly. After being bribed with 4 silver, Peter agreed to distract Jane.
+</p>
+
+<p>
+  Using the distraction, Thimble infiltrated the office from the roof and discovered Dr. Stret unconscious on the floor with visible strangulation marks, indicating he had been attacked.
+</p>
+
+<p>
+  In the room, she found a potion of healing, a potion of gaseous form, a runed severed hand preserved in a jar that appeared experimental in nature, and a notebook detailing research into a cure for Mind Rot, along with dangerous notes involving Dr. Wembly. Thimble left a message for Stret reading “We’re Even,” signed Provast.
+</p>
+
+<p>
+  While inside the office, Thimble was attacked by a separate animated hand creature, distinct from the runed hand in the jar. This hostile entity is believed to be the same type of creature that incapacitated Dr. Stret. Thimble destroyed it.
+</p>
+
+<p>
+  As this unfolded, a wagon arrived carrying live cargo, unconscious bodies that were brought inside and locked in storage. Peter then descended to the lower level and secured it behind him. Shortly after, Jane discovered Stret’s condition and panicked, prompting the party to regroup.
+</p>
+
+<p>
+  Eldric and Thimble worked to calm Jane, while Zeharith and Umashi moved to assess the stored bodies. With the information gathered, it became clear that Eldric and Zeharith could likely complete Stret’s research and finalize a cure for Mind Rot.
+</p>
+
+<p>
+  Jane, now fearful, insisted that she and Stret needed to flee the city and provided the party with a safe key, warning them not to open Dr. Wembly’s door without protection.
+</p>
+
+<p>
+  The group resolved to move Jane and Stret to The Mill for safety, while preparing for whatever waited below the morgue and within Wembly’s domain.
+</p>
+                </p>
+                <ul>
+                  <li>Major discoveries</li>
+                  <li>Important NPCs</li>
+                  <li>Combat or strange events</li>
+                  <li>Loose threads or cliffhangers</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="recap-entry">
+              <div class="recap-label">Session 2</div>
+              <h2 class="recap-title">TBD</h2>
+              <div class="recap-date">May 1, 2026</div>
+              <div class="recap-body">
+                <p>
+                  Copy one of these full recap blocks whenever you want to add another session.
+                  That keeps the formatting nice and obedient, like a well-trained ghost.
+                </p>
+              </div>
+            </article>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Some memories fade in the Mists. Others sharpen.
+    </div>
+  </main>
+</body>
+</html>
