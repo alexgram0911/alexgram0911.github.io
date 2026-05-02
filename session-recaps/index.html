@@ -333,17 +333,50 @@
     }
 
     .recap-entry {
-      padding: 26px 0;
       border-bottom: 1px solid rgba(202, 183, 143, 0.12);
-    }
-
-    .recap-entry:first-child {
-      padding-top: 0;
     }
 
     .recap-entry:last-child {
       border-bottom: none;
-      padding-bottom: 0;
+    }
+
+    .recap-summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 26px 44px 26px 0;
+      position: relative;
+      transition: color 0.25s ease;
+    }
+
+    .recap-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .recap-summary::after {
+      content: "+";
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Cinzel', serif;
+      font-size: 2rem;
+      line-height: 1;
+      color: var(--gold);
+      text-shadow: 0 0 14px rgba(169, 141, 89, 0.18);
+      transition: transform 0.25s ease, color 0.25s ease;
+    }
+
+    .recap-summary:hover::after {
+      color: #d0b06d;
+      transform: translateY(-50%) scale(1.08);
+    }
+
+    .recap-entry[open] .recap-summary::after {
+      content: "−";
+    }
+
+    .recap-entry[open] .recap-summary {
+      padding-bottom: 18px;
     }
 
     .recap-label {
@@ -364,7 +397,6 @@
     }
 
     .recap-date {
-      margin-bottom: 16px;
       font-size: 1rem;
       color: #bca98a;
       letter-spacing: 0.03em;
@@ -374,6 +406,7 @@
       font-size: 1.08rem;
       line-height: 1.7;
       color: #cfc5b4;
+      padding: 0 0 26px;
     }
 
     .recap-body p {
@@ -437,12 +470,22 @@
         letter-spacing: 0.14em;
       }
 
+      .recap-summary {
+        padding-right: 36px;
+      }
+
+      .recap-summary::after {
+        right: 0;
+        font-size: 1.7rem;
+      }
+
       .recap-body {
         font-size: 1rem;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="mist"></div>
 
@@ -469,6 +512,7 @@
         <div class="hero-inner">
           <div class="eyebrow">The Mists of Radjya</div>
           <h1>Session Recaps</h1>
+
           <p class="subtitle">
             A record of what the Mistwalkers found in the fog, what followed them back out,
             and what the Mists chose not to bury.
@@ -495,80 +539,129 @@
         <div class="recaps-panel">
           <div class="recaps-inner">
 
-            <article class="recap-entry">
-              <div class="recap-label">Session 1</div>
-              <h2 class="recap-title">And so it Begins</h2>
-              <div class="recap-date">April 17, 2026</div>
+            <details class="recap-entry" open>
+              <summary class="recap-summary">
+                <div>
+                  <div class="recap-label">Session 1</div>
+                  <h2 class="recap-title">And so it Begins</h2>
+                  <div class="recap-date">April 17, 2026</div>
+                </div>
+              </summary>
+
               <div class="recap-body">
                 <p>
-                 <p>
-  The party woke outside the Moss Woods alongside runners William and Matty, both marked by scars from a recent fight near the Anchorpine Forest. They carried payment of 16 silver and a message from Millwright, tied to Lady Alexa Provast and her operations out of The Mill.
-</p>
+                  The party woke outside the Moss Woods alongside runners William and Matty, both marked by scars from a recent fight near the Anchorpine Forest. They carried payment of 16 silver and a message from Millwright, tied to Lady Alexa Provast and her operations out of The Mill.
+                </p>
 
-<p>
-  The group was directed to a dead drop in Eiremoss (Telton St.) for their next job. Entering through the Southern Gate, they noted a heavier guard presence than usual but passed without issue, securing their mounts at The Mill before heading to the drop.
-</p>
+                <p>
+                  The group was directed to a dead drop in Eiremoss (Telton St.) for their next job. Entering through the Southern Gate, they noted a heavier guard presence than usual but passed without issue, securing their mounts at The Mill before heading to the drop.
+                </p>
 
-<p>
-  At the dead drop, they found three children and two guards, one distracted by a street con. Umashi noticed someone watching from a nearby window who quickly withdrew upon being seen. Using a coordinated distraction, the party retrieved the drop unnoticed.
-</p>
+                <p>
+                  At the dead drop, they found three children and two guards, one distracted by a street con. Umashi noticed someone watching from a nearby window who quickly withdrew upon being seen. Using a coordinated distraction, the party retrieved the drop unnoticed.
+                </p>
 
-<p>
-  The new job directed them to the morgue which is part of the Drausvine Hospital network where they were to assist Dr. Stret, who owed Provast some silver, by extracting live bodies from the morgue.
-</p>
+                <p>
+                  The new job directed them to the morgue which is part of the Drausvine Hospital network where they were to assist Dr. Stret, who owed Provast some silver, by extracting live bodies from the morgue.
+                </p>
 
-<p>
-  Before moving on the hospital, Thimble and Eldric stopped at The Mill, meeting Dribble, Martin, and The Pelt. From them, the party acquired four blades, confirming that more than one individual would need to be rescued. With preparation complete, they regrouped with Zeharith and Umashi, who had begun scouting the hospital.
-</p>
+                <p>
+                  Before moving on the hospital, Thimble and Eldric stopped at The Mill, meeting Dribble, Martin, and The Pelt. From them, the party acquired four blades, confirming that more than one individual would need to be rescued. With preparation complete, they regrouped with Zeharith and Umashi, who had begun scouting the hospital.
+                </p>
 
-<p>
-  Reconnaissance revealed Drausvine Hospital to be relatively quiet, with two entrances, lighted paths, and roof access via lattice. Zeharith’s familiar, Mittens, scouted inside, revealing rooms filled with dead or near-dead patients, a gated stairwell leading downward, and active morgue work in the southern section, with only a single Orderly moving throughout the building.
-</p>
+                <p>
+                  Reconnaissance revealed Drausvine Hospital to be relatively quiet, with two entrances, lighted paths, and roof access via lattice. Zeharith’s familiar, Mittens, scouted inside, revealing rooms filled with dead or near-dead patients, a gated stairwell leading downward, and active morgue work in the southern section, with only a single Orderly moving throughout the building.
+                </p>
 
-<p>
-  Inside, the party encountered Jane, a well-read clerk who noted that Dr. Stret had been locked in his office for hours and that visitors typically arrived later at night. The Orderly, Peter, revealed himself as their inside contact, warning them they had arrived too early and expressing concern not about Stret, but about Dr. Wembly. After being bribed with 4 silver, Peter agreed to distract Jane.
-</p>
+                <p>
+                  Inside, the party encountered Jane, a well-read clerk who noted that Dr. Stret had been locked in his office for hours and that visitors typically arrived later at night. The Orderly, Peter, revealed himself as their inside contact, warning them they had arrived too early and expressing concern not about Stret, but about Dr. Wembly. After being bribed with 4 silver, Peter agreed to distract Jane.
+                </p>
 
-<p>
-  Using the distraction, Thimble infiltrated the office from the roof and discovered Dr. Stret unconscious on the floor with visible strangulation marks, indicating he had been attacked.
-</p>
+                <p>
+                  Using the distraction, Thimble infiltrated the office from the roof and discovered Dr. Stret unconscious on the floor with visible strangulation marks, indicating he had been attacked.
+                </p>
 
-<p>
-  In the room, she found a potion of healing, a potion of gaseous form, a runed severed hand preserved in a jar that appeared experimental in nature, and a notebook detailing research into a cure for Mine Rot, along with dangerous notes involving Dr. Wembly. Thimble left a message for Stret reading “We’re Even,” signed Provast.
-</p>
+                <p>
+                  In the room, she found a potion of healing, a potion of gaseous form, a runed severed hand preserved in a jar that appeared experimental in nature, and a notebook detailing research into a cure for Mine Rot, along with dangerous notes involving Dr. Wembly. Thimble left a message for Stret reading “We’re Even,” signed Provast.
+                </p>
 
-<p>
-  While inside the office, Thimble was attacked by a separate animated hand creature, distinct from the runed hand in the jar. This hostile entity is believed to be the same type of creature that incapacitated Dr. Stret. Thimble destroyed it.
-</p>
+                <p>
+                  While inside the office, Thimble was attacked by a separate animated hand creature, distinct from the runed hand in the jar. This hostile entity is believed to be the same type of creature that incapacitated Dr. Stret. Thimble destroyed it.
+                </p>
 
-<p>
-  As this unfolded, a wagon arrived carrying live cargo, unconscious bodies that were brought inside and locked in storage. Peter then descended to the lower level and secured it behind him. Shortly after, Jane discovered Stret’s condition and panicked, prompting the party to regroup.
-</p>
+                <p>
+                  As this unfolded, a wagon arrived carrying live cargo, unconscious bodies that were brought inside and locked in storage. Peter then descended to the lower level and secured it behind him. Shortly after, Jane discovered Stret’s condition and panicked, prompting the party to regroup.
+                </p>
 
-<p>
-  Eldric and Thimble worked to calm Jane, while Zeharith and Umashi moved to assess the stored bodies. With the information gathered, it became clear that Eldric and Zeharith could likely complete Stret’s research and finalize a cure for Mind Rot.
-</p>
+                <p>
+                  Eldric and Thimble worked to calm Jane, while Zeharith and Umashi moved to assess the stored bodies. With the information gathered, it became clear that Eldric and Zeharith could likely complete Stret’s research and finalize a cure for Mind Rot.
+                </p>
 
-<p>
-  Jane, now fearful, insisted that she and Stret needed to flee the city and provided the party with a safe key, warning them not to open Dr. Wembly’s door without protection.
-</p>
+                <p>
+                  Jane, now fearful, insisted that she and Stret needed to flee the city and provided the party with a safe key, warning them not to open Dr. Wembly’s door without protection.
+                </p>
 
-<p>
-  The group resolved to move Jane and Stret to The Mill for safety, while preparing for whatever waited below the morgue and within Wembly’s domain.
-</p>
+                <p>
+                  The group resolved to move Jane and Stret to The Mill for safety, while preparing for whatever waited below the morgue and within Wembly’s domain.
+                </p>
               </div>
-            </article>
+            </details>
 
-            <article class="recap-entry">
-              <div class="recap-label">Session 2</div>
-              <h2 class="recap-title">TBD</h2>
-              <div class="recap-date">May 1, 2026</div>
+            <details class="recap-entry">
+              <summary class="recap-summary">
+                <div>
+                  <div class="recap-label">Session 2</div>
+                  <h2 class="recap-title">TBD</h2>
+                  <div class="recap-date">May 1, 2026</div>
+                </div>
+              </summary>
+
               <div class="recap-body">
                 <p>
-                  <!--Copy one of these full recap blocks whenever you want to add another session.
-                </p>-->
+                  The party finds four captured ratfolk from the Southern Swarm, still alive but unconscious, and manages to revive them with Zeharith’s help. Instead of leaving them, the group arms them and sets them free, gaining potential allies, with Zora and Anastasia choosing to stick with the party while the others head back to the mill.
+                </p>
+                
+                <p>
+                  While investigating Wembly’s office, they encounter acid-trapped defenses, hinting that something important is being hidden. Inside, they discover a safe containing a valuable gem, some coin, and more importantly, a ledger proving Wembly has been stealing from his own staff. It paints him as both corrupt and secretive, likely involved in something larger than simple greed.
+                </p>
+                
+                <p>
+                  Returning to a locked gate, they run into Peter, badly wounded and panicked, screaming that something bit him. The wound is unnatural, with tiny fingers protruding from it, and the party is forced to kill him to stop whatever is happening.
+                </p>
+                
+                <p>
+                  The group pushes into the sewers, following a breach into a green-lit tunnel system that feels unnatural and wrong. They eventually discover a cavern where a towering undead creature is holding Wembly, surrounded by six containment vats with creatures inside. The party engages, and during the fight Wembly is killed. The group defeats the creature and then destroys the remaining creatures in the vats, fully clearing the immediate threat.
+                </p>
+                
+                <p>
+                  After the fight, they notice the creature bears two markings, one tied to Wembly and another from an unknown source that Zeharith seems to recognize, pointing to a larger force at play. The party takes Wembly’s notes, along with a key ring, crafting materials, enhanced weapons, and a recipe for shotgun shells.
+                </p>
+                
+                <p>
+                  By the end, Wembly is dead, his operation is dismantled, and the experiments are destroyed. However, the presence of the second marking makes it clear he wasn’t acting alone, leaving a larger and more dangerous mystery still waiting beneath the surface.
+                </p>
               </div>
-            </article>
+            </details>
+
+            <!--
+              Copy this block whenever you want to add another collapsible session:
+
+              <details class="recap-entry">
+                <summary class="recap-summary">
+                  <div>
+                    <div class="recap-label">Session 3</div>
+                    <h2 class="recap-title">Session Title</h2>
+                    <div class="recap-date">Month Day, Year</div>
+                  </div>
+                </summary>
+
+                <div class="recap-body">
+                  <p>
+                    Add your recap here.
+                  </p>
+                </div>
+              </details>
+            -->
 
           </div>
         </div>
